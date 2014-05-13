@@ -1004,7 +1004,7 @@ function theme_os_taxonomy_tagged_nodes($variables) {
     'indentation' => 10,
     'bundles' => array(),
     'view_mode' => 'teaser',
-    'description' => empty($variables['taxonomy_term']) ? FALSE : TRUE,
+    'description' => empty($variables['taxonomy_term']),
     'child_element' => TRUE,
     'indentation_type' => 'px',
     'attributes' => array(),
