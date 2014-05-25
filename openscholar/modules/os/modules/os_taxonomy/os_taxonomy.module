@@ -16,7 +16,6 @@ function os_taxonomy_menu() {
     'page callback' => 'os_taxonomy_vocab_page',
     'page arguments' => array(1),
     'access arguments' => array('access content'),
-   // 'file' => "/".drupal_get_path('module', 'taxonomy').'/taxonomy.pages.inc',
   );
 
   return $items;
@@ -1823,4 +1822,89 @@ function os_taxonomy_field_widget_form_alter(&$element, &$form_state, $context) 
   $element['#prefix'] = theme('item_list', array('items' => $items, 'attributes' => $attributes));
   $element['#attached']['css'][] = drupal_get_path('module', 'os_taxonomy') . '/os_taxonomy.css';
   $element['#attached']['js'][] = drupal_get_path('module', 'os_taxonomy') . '/os_taxonomy.js';
+}
+
+/**
+ * Implements hook_field_attach_create_bundle().
+ *
+ * When creating a new vocabulary attach the right fields.
+ */
+function os_taxonomy_field_attach_create_bundle($entity_type, $bundle) {
+  switch ($entity_type) {
+    case 'taxonomy_term' :
+      os_taxonomy_attach_fields_to_vocabulary('taxonomy_term', $bundle);
+      break;
+  }
+}
+
+function os_taxonomy_attach_fields_to_vocabulary($entity_type, $bundle) {
+  dpm($bundle);
+}
+
+/**
+ * Implement hook_og_fields_info().
+ */
+function os_taxonomy_og_fields_info() {
+
+  $items['show_description'] = array(
+    'type' => array('group content'),
+    'description' => t('Show taxonomy term description.'),
+    // Showing description can be done only on taxonomy term entity.
+    'entity' => array('taxonomy_term'),
+    'field' => array(
+      'active' => 1,
+      'cardinality' => 1,
+      'deleted' => 0,
+      'entity_types' => array('taxonomy_term'),
+      'field_name' => 'show_description',
+      'foreign keys' => array(),
+      'indexes' => array(
+        'value' => array(
+          0 => 'value',
+        ),
+      ),
+      'locked' => 0,
+      'module' => 'list',
+      'settings' => array('allowed_values' => array(0 => '', 1 => '',),'allowed_values_function' => '',),
+      'translatable' => 0,
+      'type' => 'list_boolean',
+//      'no_ui' => TRUE,
+    ),
+    'instance' => array(
+      'default_value' => array(
+        0 => array(
+          'value' => 0,
+        ),
+      ),
+      'deleted' => 0,
+      'description' => 'Define whether the term description will be seen in the term page.',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'list',
+          'settings' => array(),
+          'type' => 'list_default',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'taxonomy_term',
+      'field_name' => 'field_show_description',
+      'label' => 'Show description',
+      'required' => 0,
+      'settings' => array(
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'active' => 1,
+        'module' => 'options',
+        'settings' => array(
+          'display_label' => 1,
+        ),
+        'type' => 'options_onoff',
+        'weight' => 2,
+      ),
+    ),
+  );
+
+  return $items;
 }
