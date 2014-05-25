@@ -29,7 +29,22 @@ function os_taxonomy_update_7002() {
 /**
  * Attach "Show description" field to all existing vocabularies.
  */
-function os_taxonomy_update_7003() {
+function os_taxonomy_update_7003(&sandbox) {
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['info'] = array_keys(taxonomy_vocabulary_get_names());
+    $context['sandbox']['max'] = count($context['sandbox']['info']);
+  }
+  $batch = 10;
+  $progress = $context['sandbox']['progress'];
 
-  og_create_field('show_description', $entity_type, $bundle);
+  for ($index = $progress; ($index <= $progress + $batch) && ($index <= $context['sandbox']['max']); $index++) {
+    $machine_name = $context['context']['info'][$index];
+    $context['message'] = t('Adding required field to vocabulary @machine_name', array('@machine_name' => $machine_name));
+    og_create_field('show_description', 'taxonomy_term', $machine_name);
+    $context['sandbox']['progress'] = $index;
+  }
+
+  // Affect the progress bar.
+  $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
 }
