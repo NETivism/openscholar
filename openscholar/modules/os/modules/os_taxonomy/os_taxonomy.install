@@ -29,22 +29,22 @@ function os_taxonomy_update_7002() {
 /**
  * Attach "Show description" field to all existing vocabularies.
  */
-function os_taxonomy_update_7003(&sandbox) {
-  if (!isset($context['sandbox']['progress'])) {
-    $context['sandbox']['progress'] = 0;
-    $context['sandbox']['info'] = array_keys(taxonomy_vocabulary_get_names());
-    $context['sandbox']['max'] = count($context['sandbox']['info']);
+function os_taxonomy_update_7003(&$sandbox) {
+  if (!isset($sandbox['sandbox']['progress'])) {
+    $sandbox['sandbox']['progress'] = 0;
+    $sandbox['sandbox']['info'] = array_keys(taxonomy_vocabulary_get_names());
+    $sandbox['sandbox']['max'] = count($sandbox['sandbox']['info']);
   }
   $batch = 10;
-  $progress = $context['sandbox']['progress'];
+  $progress = $sandbox['sandbox']['progress'];
 
-  for ($index = $progress; ($index <= $progress + $batch) && ($index <= $context['sandbox']['max']); $index++) {
-    $machine_name = $context['context']['info'][$index];
-    $context['message'] = t('Adding required field to vocabulary @machine_name', array('@machine_name' => $machine_name));
+  for ($index = $progress; ($index <= $progress + $batch) && ($index <= $sandbox['sandbox']['max']); $index++) {
+    $machine_name = $sandbox['context']['info'][$index];
+    $sandbox['message'] = t('Adding required field to vocabulary @machine_name', array('@machine_name' => $machine_name));
     og_create_field('show_description', 'taxonomy_term', $machine_name);
-    $context['sandbox']['progress'] = $index;
+    $sandbox['sandbox']['progress'] = $index;
   }
 
   // Affect the progress bar.
-  $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+  $sandbox['finished'] = $sandbox['sandbox']['progress'] / $sandbox['sandbox']['max'];
 }
