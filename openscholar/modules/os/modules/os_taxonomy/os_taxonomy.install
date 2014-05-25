@@ -25,3 +25,11 @@ function os_taxonomy_update_7001() {
 function os_taxonomy_update_7002() {
   module_enable(array('term_reference_tree'));
 }
+
+/**
+ * Attach "Show description" field to all existing vocabularies.
+ */
+function os_taxonomy_update_7003() {
+
+  og_create_field('show_description', $entity_type, $bundle);
+}
