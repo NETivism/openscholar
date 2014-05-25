@@ -119,7 +119,7 @@ function vsite_vocab_field_create_instance($instance) {
 /**
  * Implements hook_form_FORM_ID_alter() for taxonomy_form_vocabulary.
  *
- * 1) Limit avalible bundles to just Publc/Private bundles in OS.
+ * 1) Limit available bundles to just Public/Private bundles in OS.
  *
  * @see og_vocab_form_taxonomy_form_vocabulary_alter().
  */
