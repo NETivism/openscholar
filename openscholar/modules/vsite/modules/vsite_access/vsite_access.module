@@ -234,7 +234,7 @@ function vsite_access_privacy_available_values() {
 }
 
 /**
- * Implement hook_og_fields_info().
+ * Implements hook_og_fields_info().
  */
 function vsite_access_og_fields_info() {
 

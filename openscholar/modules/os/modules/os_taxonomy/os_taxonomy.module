@@ -1837,12 +1837,21 @@ function os_taxonomy_field_attach_create_bundle($entity_type, $bundle) {
   }
 }
 
+/**
+ * Adds "show description" field to vocabulary.
+ *
+ * @param $entity_type
+ *   The entity type of the bundle we want to attach the field to
+ *
+ * @param $bundle
+ *   The bundle to attach the fields to.
+ */
 function os_taxonomy_attach_fields_to_vocabulary($entity_type, $bundle) {
-  dpm($bundle);
+  og_create_field('show_description', $entity_type, $bundle);
 }
 
 /**
- * Implement hook_og_fields_info().
+ * Implements hook_og_fields_info().
  */
 function os_taxonomy_og_fields_info() {
 
