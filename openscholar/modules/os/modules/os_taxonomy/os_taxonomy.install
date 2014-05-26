@@ -36,15 +36,14 @@ function os_taxonomy_update_7003(&$sandbox) {
     $sandbox['sandbox']['max'] = count($sandbox['sandbox']['info']);
   }
   $batch = 10;
-  $progress = $sandbox['sandbox']['progress'];
-
-  for ($index = $progress; ($index <= $progress + $batch) && ($index <= $sandbox['sandbox']['max']); $index++) {
-    $machine_name = $sandbox['sandbox']['info'][$index];
+  $start_banch = $sandbox['sandbox']['progress'];
+  while (($sandbox['sandbox']['progress'] <= $start_banch + $batch) && ($sandbox['sandbox']['progress'] <= $sandbox['sandbox']['max'] - 1)) {
+    $machine_name = $sandbox['sandbox']['info'][$sandbox['sandbox']['progress']];
     $sandbox['message'] = t('Adding required field to vocabulary @machine_name', array('@machine_name' => $machine_name));
     og_create_field('show_description', 'taxonomy_term', $machine_name);
-    $sandbox['sandbox']['progress'] = $index;
+    $sandbox['sandbox']['progress']++;
   }
 
   // Affect the progress bar.
-  $sandbox['finished'] = $sandbox['sandbox']['progress'] / $sandbox['sandbox']['max'];
+  $sandbox['#finished'] = $sandbox['sandbox']['progress'] / $sandbox['sandbox']['max'];
 }
