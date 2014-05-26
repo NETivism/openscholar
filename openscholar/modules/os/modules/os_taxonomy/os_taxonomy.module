@@ -1913,3 +1913,15 @@ function os_taxonomy_og_fields_info() {
 
   return $items;
 }
+
+/**
+ * Implements hook_preprocess_taxonomy_term().
+ * 
+ * @param $vars
+ */
+function os_taxonomy_preprocess_taxonomy_term(&$vars) {
+  $term = $vars['term'];
+  $wrapper = entity_metadata_wrapper('taxonomy_term', $term);
+  $vars['show_description'] = $wrapper->show_description->value();
+  dpm($vars);
+}
