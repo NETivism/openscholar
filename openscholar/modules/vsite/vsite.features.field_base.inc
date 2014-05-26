@@ -45,6 +45,7 @@ function vsite_field_default_field_bases() {
         ),
         'target_bundles' => array(
           'department' => 'department',
+          'project' => 'project',
         ),
       ),
       'target_type' => 'node',

@@ -133,6 +133,9 @@ function theme_os_publications_tabular(&$vars) {
   // Add Upload Div.
   $output .= $field_upload;
 
+  // Add pub-cover-content-wrapper.
+  $output .= '<div id="pub-cover-content-wrapper">';
+
   // Move publication image up under the citation.
   $book_images = field_get_items('node',$node,'field_biblio_image', $node->language);
   if (!empty($book_images)) {
@@ -142,7 +145,7 @@ function theme_os_publications_tabular(&$vars) {
       'path' => $book_image['uri'],
       'title' => $book_image['title'],
     ));
-    $book_output = '<div id="pub-cover-content-wrapper"><div class="publication-cover-container">' . $theme_image . '</div>';
+    $book_output = '<div class="publication-cover-container">' . $theme_image . '</div>';
     // Add the image to the output under the citation.
     $output .= $book_output;
   }

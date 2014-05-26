@@ -466,6 +466,23 @@ function os_migrate_demo_get_node_id($title, $return = FALSE) {
 }
 
 /**
+ * Get the node ID by title in a given VSite.
+ */
+function os_migrate_demo_get_node_id_in_vsite($title, $vsite) {
+  $gid = os_migrate_demo_get_node_id($vsite, TRUE);
+  $query = new entityFieldQuery();
+  $result = $query
+    ->entityCondition('entity_type', 'node')
+    ->propertyCondition('title', $title)
+    ->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $gid)
+    ->execute();
+
+  $nid = reset($result['node'])->nid;
+
+  print($nid);
+}
+
+/**
  * Get the role of a user in a group.
  *
  *  @return

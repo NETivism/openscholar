@@ -422,8 +422,8 @@ function vsite_form_node_delete_confirm_alter(&$form, $form_state) {
   }
 
   $form['vsite_name'] = array(
-    '#title' => t('Warning! You are about to delete your VSITE!'),
-    '#description' => t('Enter the VSite name.'),
+    '#title' => t('Warning! You are about to delete your site!'),
+    '#description' => t('Enter the word DELETE to delete your site.'),
     '#type' => 'textfield',
     '#required' => TRUE,
     '#element_validate' => array('vsite_delete_vsite_confirm_title'),
@@ -434,9 +434,8 @@ function vsite_form_node_delete_confirm_alter(&$form, $form_state) {
  * Validate handler; Verify the node title is like the user entered.
  */
 function vsite_delete_vsite_confirm_title($element, &$form_state) {
-  $node = node_load($form_state['values']['nid']);
-  if (trim($node->title) != trim($form_state['values']['vsite_name'])) {
-    form_error($element, t('Title does not match.'));
+  if ($form_state['values']['vsite_name'] != 'DELETE') {
+    form_error($element, t('Insert the word DELETE to delete your site.'));
   }
 }
 
@@ -2659,6 +2658,10 @@ function vsite_taxonomy_term_presave($term) {
  * Validate handler; Prevent duplicate aliases.
  */
 function vsite_form_alias_validate($form, &$form_state) {
+  if (!empty($form_state['term']) && $form_state['triggering_element']['#type'] == 'submit' && $form_state['triggering_element']['#value'] == 'Delete') {
+    return;
+  }
+
   if (!empty($form['#entity_type'])) {
     $entity_type = $form['#entity_type'];
   }

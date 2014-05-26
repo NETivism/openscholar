@@ -105,6 +105,8 @@
     float: left;
     width: 235px;
     margin: 10px 0 0 -30px;
+    position:relative;
+    z-index:1;
    }
   
   @media (max-width: 1000px) {

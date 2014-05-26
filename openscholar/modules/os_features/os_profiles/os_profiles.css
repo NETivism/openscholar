@@ -1,7 +1,7 @@
 #content .node-person .field-name-field-person-photo,
 #content .node-person .no-default-image,
 .block-boxes-os_boxes_manual_list .node-person .field-name-field-person-photo,
-#content .node-person .field-name-field-phone,
+#content-column .node-person .field-name-field-phone,
 #content .node-person .field-name-field-email {
   float: left;
   margin-right: 1em;

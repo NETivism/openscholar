@@ -850,10 +850,12 @@ function _os_importer_create_vocab($name, $terms, $group_type, $gid, $entity_typ
 
   $tids = array();
 
-  // Creating the terms for the new vocabulary.
+  // Creating the terms for the new vocabulary if terms are provided.
   $taxonomy_terms = explode("|", $terms);
-
   foreach ($taxonomy_terms as $taxonomy_term) {
+    if (empty($taxonomy_term)) {
+      continue;
+    }
     $term = taxonomy_get_term_by_name($taxonomy_term, $vocabulary->machine_name);
 
     if (!$term) {

@@ -31,6 +31,7 @@ features[feeds_importer][] = os_classes
 features[feeds_tamper][] = os_classes-body-utf8_convert
 features[feeds_tamper][] = os_classes-link_title-utf8_convert
 features[feeds_tamper][] = os_classes-title-utf8_convert
+features[feeds_tamper][] = os_classes-year-year_to_full_date
 features[field_base][] = field_class
 features[field_base][] = field_class_link
 features[field_base][] = field_offered_year

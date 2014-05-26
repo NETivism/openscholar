@@ -101,11 +101,29 @@ border-top: none;
 }
 
 
-#boxes-box-site_info, #boxes-box-site_info a {
+#boxes-box-site_info, 
+#boxes-box-site_info a {
      font-family: 'Roboto',helvetica,arial;
 }
 
-#page-title, .node-title, .page-search .title a, #content-column .block.block-boxes-os_boxes_manual_list .links.inline a, .not-front #content-column ul li, .not-front #content-column ol li, .more-link, .page-search #content-column p, .not-front #content-column p, .links a, #footer ul.menu a, .boxes-box-content h2, .section-nav a, #content-column h2, #content-column h3, #content-column h4, #content-column .field-name-body {
+#page-title, .node-title, 
+.page-search .title a, 
+#content-column .block.block-boxes-os_boxes_manual_list .links.inline a, 
+.not-front #content-column ul li, 
+.not-front #content-column ol li, 
+.more-link, .page-search #content-column p, 
+.not-front #content-column p, 
+.links a, 
+#footer ul.menu a, 
+.boxes-box-content h2, 
+.section-nav a, 
+#content-column h2, 
+#content-column h3, 
+#content-column h4, 
+#tinymce h2, 
+#tinymce h3, 
+#tinymce h4, 
+#content-column .field-name-body {
     font-family: 'Roboto',serif;
 }
 

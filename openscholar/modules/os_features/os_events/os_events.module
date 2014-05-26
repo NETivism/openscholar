@@ -79,6 +79,12 @@ function os_events_menu() {
 
 /**
  * Check the capacity if the event reach it's capacity.
+ *
+ * @param $node
+ *  The event to check capacity for.
+ * @return bool
+ *  Returns FALSE if capacity isn't reached yet. Else, check if user can
+ *  signup for events and return TRUE/FALSE accordingly.
  */
 function os_events_event_registration_reach_capacity($node) {
   // Check how much registration exists for this event.
@@ -278,6 +284,24 @@ function os_events_process_node(&$variables) {
     }
   }
 
+  $registrations_type = !empty($variables['node']->field_event_registration[LANGUAGE_NONE][0]['registration_type']);
+  $register = '';
+
+  // Show the signup link if capacity isn't reached and no repeat rule is used.
+  if ($registrations_type && os_events_event_registration_reach_capacity($variables['node']) && !$variables['field_date'][0]['rrule'] ) {
+    // In full view mode show a link to a modal.
+    if ($variables['view_mode'] == 'full') {
+      $register = os_events_generate_modal_register_link($variables['node']->nid, array());
+    }
+    // In teaser view mode link to the event page.
+    elseif ($variables['view_mode'] == 'teaser') {
+      $register = '<div class="register-link-teaser">' . l(t('Registration is required'), 'node/' . $variables['node']->nid) . '</div>';
+    }
+  }
+  elseif ($registrations_type) {
+    $register = t('Sorry, the event is full');
+  }
+
   if ($variables['page']) {
     $options = array('absolute' => TRUE, 'attributes' => array('class' => array('subscribe')));
     $subscribe = l(t('subscribe'), 'calendar/export.ics/' . $variables['node']->nid, $options);
@@ -290,16 +314,6 @@ function os_events_process_node(&$variables) {
 
     $ical = l(t('iCal'), 'calendar/export.ics/' . $variables['node']->nid, array('attributes' => array('class' => array('ical'))));
 
-    $registrations_type = !empty($variables['node']->field_event_registration[LANGUAGE_NONE][0]['registration_type']);
-
-    // Show the signup link uf capacity isn't reached and no repeat rule is used.
-    if ($registrations_type && os_events_event_registration_reach_capacity($variables['node']) && !$variables['field_date'][0]['rrule'] ) {
-      $register = os_events_generate_modal_register_link($variables['node']->nid);
-    }
-    else {
-      $register = '';
-    }
-
     $params = array(
       'register' => $register,
       'ical' => $ical,
@@ -310,8 +324,13 @@ function os_events_process_node(&$variables) {
       '#weight' => 10,
     );
   }
-  
-  //hide the repeat rule summary from sidebar_teaser
+
+  // In case of a "teaser" view mode, put the link before the date.
+  if ($variables['view_mode'] == 'teaser') {
+    $variables['content']['field_date'][0]['#markup'] = $register . $variables['content']['field_date'][0]['#markup'];
+  }
+
+  // Hide the repeat rule summary from sidebar_teaser.
   if ($variables['view_mode'] == 'sidebar_teaser' && $variables['content']['field_date']['#items']) {
     $rule = theme_date_repeat_display(array('item' => array('rrule' => $variables['content']['field_date']['#items'][0]['rrule'])));
     $variables['content']['field_date'][0]['#markup'] = str_replace($rule, '', $variables['content']['field_date'][0]['#markup'] );
@@ -418,6 +437,13 @@ function os_events_modal_submit($form, &$form_state) {
   $commands[] = ctools_modal_command_dismiss();
   // Display messages.
   $commands[] = ajax_command_before('#columns', theme('status_messages'));
+
+  // In case event is full update the register links via ajax.
+  $event = node_load($form_state['registration']->entity_id);
+  if (!os_events_event_registration_reach_capacity($event)) {
+    $commands[] = ajax_command_html('.register-link-teaser', t('Sorry, the event is full'));
+    $commands[] = ajax_command_html('.os_events_export_links .first', t('Sorry, the event is full'));
+  }
 
   // Clean any message.
   drupal_get_messages();
@@ -740,7 +766,14 @@ function os_events_form_registration_entity_settings_form_alter(&$form, $form_st
   unset($form['token_tree']);
 
   // Default value of the From field should be the author of the event's e-mail
-  $from_default_value = $wrapper->author->mail->value();
+  // in case it hasn't been changed yet (if it hasn't been changed yet, the email
+  // will be set by default as the site owner email address).
+  if ($form['settings']['from_address']['#default_value'] == variable_get('site_mail')) {
+    $from_default_value = $wrapper->author->mail->value();
+  }
+  else {
+    $from_default_value = $form['settings']['from_address']['#default_value'];
+  }
 
   $form['status']['#title'] = t('Enable registrations');
   $form['status']['#description'] = t('Users must register their attendance in advance.');
@@ -810,6 +843,20 @@ You request to send a reminder for the event <a href='[node:url]'>[node:title]</
   $form['reminder']['#weight'] = 9;
   $form['scheduling']['#weight'] = 10;
   $form['save']['#weight'] = 11;
+
+  // Add handler to populate the "from_address" field in the form with the value
+  // submitted in the "from" field. This is done since the registration module needs
+  // the email value to be in the "settings" element which is given a
+  // "#access = FALSE".
+  $form['#validate'][] = '_os_events_update_from_address';
+}
+
+/**
+ * Helper function; Populates the settings of the registration with the "from"
+ * email address.
+ */
+function _os_events_update_from_address(&$form, &$form_state) {
+  $form_state['values']['settings']['from_address'] = $form_state['values']['from'];
 }
 
 /**

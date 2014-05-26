@@ -111,9 +111,25 @@ function os_search_solr_os_widget() {
  * Implements hook_apachesolr_query_alter().
  */
 function os_search_solr_apachesolr_query_alter(DrupalSolrQueryInterface $query) {
+  
+  // Only get public content, this excludes content with privacy = 1.
+  $query->addFilter('bs_private', 1, TRUE);
+  
   if (module_exists('vsite') && ($vsite = spaces_get_space())) {
     // I only want to see items in this site
     $query->addFilter("sm_og_group_ref", $vsite->group_type.":".$vsite->id);
+    
+    $group_wrapper = entity_metadata_wrapper('node', $vsite->group);
+  
+    //The site is private but this user has access so let them see.
+    if ($query->hasFilter('bs_private', 1, TRUE) && module_exists('vsite_access') && !empty($group_wrapper->{VSITE_ACCESS_FIELD}) && $group_wrapper->{VSITE_ACCESS_FIELD}->value()) {
+      $query->removeFilter('bs_private');
+    }
+    
+    // There may be private features, this user is a member and should get access to private features in search.
+    if ($query->hasFilter('bs_private', 1, TRUE) && (user_access('administer group') || og_is_member('node', $vsite->nid))) {
+      $query->removeFilter('bs_private');
+    }
   }
   elseif (variable_get('file_default_scheme', 'public') == 'private') {
     //We are not in a vsite, and we are in  a private install.
@@ -125,6 +141,7 @@ function os_search_solr_apachesolr_query_alter(DrupalSolrQueryInterface $query) 
     // Limit searches to just this OpenScholar install in shared indexes.
     $query->addFilter('hash', apachesolr_site_hash());
   }
+  
 }
 
 /**
@@ -214,7 +231,6 @@ function os_search_solr_block_view_alter(&$data,$block) {
  */
 function os_search_solr_apachesolr_entity_info_alter(&$entity_info) {
   $entity_info['node']['document callback'] = array('os_search_solr_apachesolr_index_node_solr_document');
-  $entity_info['node']['status callback'][] = 'os_search_solr_apachesolr_index_node_status_callback';
 }
 
 /**
@@ -223,6 +239,11 @@ function os_search_solr_apachesolr_entity_info_alter(&$entity_info) {
  * Remove the author from index, apart of the "Blog" content type.
  */
 function os_search_solr_apachesolr_index_node_solr_document(ApacheSolrDocument $document, $node, $entity_type, $env_id) {
+  
+  if($entity_type == 'node') {
+    $document->bs_private = !os_search_solr_apachesolr_privacy_callback($node->nid, $entity_type);
+  }
+  
   $documents = apachesolr_index_node_solr_document($document, $node, $entity_type, $env_id);
 
   // Check in the app, if we need to index the author.
@@ -251,9 +272,9 @@ function os_search_solr_apachesolr_index_node_solr_document(ApacheSolrDocument $
 
 }
 /**
- * Status callback for ApacheSolr, for nodes.
+ * Privacy callback for ApacheSolr, for nodes.
  */
-function os_search_solr_apachesolr_index_node_status_callback($entity_id, $entity_type) {
+function os_search_solr_apachesolr_privacy_callback($entity_id, $entity_type) {
   if (!module_exists('vsite')) {
     // We don't have groups.
     return TRUE;
@@ -261,7 +282,7 @@ function os_search_solr_apachesolr_index_node_status_callback($entity_id, $entit
 
   if (!$entity = entity_load_single($entity_type, $entity_id)) {
     // Entity can't be loaded.
-    return;
+    return FALSE;
   }
 
   $wrapper = entity_metadata_wrapper($entity_type, $entity);
@@ -283,7 +304,7 @@ function os_search_solr_apachesolr_index_node_status_callback($entity_id, $entit
   if (module_exists('vsite_access') && !empty($group_wrapper->{VSITE_ACCESS_FIELD}) && $group_wrapper->{VSITE_ACCESS_FIELD}->value()) {
     // Private group, and not a private install, exclude it.
     if (variable_get('file_default_scheme', 'public') != 'private') {
-      return;
+      return FALSE;
     }
   }
 
@@ -304,12 +325,12 @@ function os_search_solr_apachesolr_index_node_status_callback($entity_id, $entit
   foreach ($result as $row) {
     $features = unserialize($row->value);
     if (empty($features[$feature]) || $features[$feature] != 1) {
-      // Disabled or private feature, exclude it.
-      return;
+      // Disabled or private feature, flag it.
+      return FALSE;
     }
   }
 
-  // If we reached this point, it means the node can be indexed.
+  // If we reached this point, it means the node is 'public'.
   return TRUE;
 }
 

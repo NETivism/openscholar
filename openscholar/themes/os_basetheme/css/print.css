@@ -1,6 +1,12 @@
-#branding_header, #branding_footer, #header, #menu-bar, .sidebar, #footer {
+@media print {
+	
+/*Reset Style*/
+body {margin:0; padding:0; line-height: 1.4em; word-spacing:1px; letter-spacing:0.2px; font: 13px Arial, Helvetica,"Lucida Grande", serif; color: #000;}	
+
+#branding_header, #branding_footer, #menu-bar, .sidebar, #footer, .block-os-search-db {
      display: none;
 }
+
 
 #content-column .content-inner {
      margin: 0px ! important;
@@ -11,4 +17,15 @@
      font-family: arial, verdana;
 }
 
-h1, h2, h3, h4,p {margin-bottom:15px;}
+
+#content-column .block ul {
+margin-left: 18px;
+}
+
+/* Links */
+a:link, a:visited {background: transparent; color:#333; text-decoration:none;}
+a:link[href^="http://"]:after, a[href^="http://"]:visited:after {content: " (" attr(href) ") "; font-size: 11px;}
+a[href^="http://"] {color:#000;} 
+
+}
+

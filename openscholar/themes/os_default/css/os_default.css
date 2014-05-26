@@ -344,6 +344,11 @@ border-radius: 4px;
 background: #3b76b1;
 }
 
+#pin-register.pin-button,
+#pin-register.pin-button:hover {
+background-color: transparent;
+}
+
 .logged-in.no-sidebars.page-user #content .user-add-website {
 background: #3D9B13;
 }

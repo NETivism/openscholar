@@ -49,6 +49,18 @@ Feature:
      Then I should not see "White house"
 
   @api @first
+  Scenario: Make sure that when a source node is deleted the copied node becomes
+            editable.
+    Given I am logging in as "john"
+      And I visit "john/people/hillary-diane-rodham-clinton"
+      And I edit the node "Hillary Diane Rodham Clinton" in the group "john"
+      And I should not see "Professional Titles/Affiliations"
+          # Delete the original node.
+     When I delete the node of type "person" named "Hillary Diane Rodham Clinton" in the group "obama"
+      And I edit the node "Hillary Diane Rodham Clinton" in the group "john"
+     Then I should see "Professional Titles/Affiliations"
+
+  @api @first
   Scenario: Test changing the owner of a VSite.
     Given I am logging in as "admin"
       And I give the user "john" the role "vsite admin" in the group "obama"

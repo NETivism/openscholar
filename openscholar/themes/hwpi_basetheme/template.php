@@ -26,6 +26,11 @@ function hwpi_basetheme_preprocess_html(&$vars) {
  * Adds mobile menu controls to menubar.
  */
 function hwpi_basetheme_page_alter(&$page) {
+  // Avoid adding responsive menu in case of an AJAX call.
+  if (strstr($_GET['q'], 'ajax')) {
+    return;
+  }
+
   $page['responsive_menu']['#sorted'] = false;
   $page['responsive_menu']['mobile'] = array(
     '#theme' => 'links',

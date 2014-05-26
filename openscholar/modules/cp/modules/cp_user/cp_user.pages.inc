@@ -19,6 +19,13 @@ function cp_user_get_member_rows($gid) {
   $status_edit_text = t('remove');
   $change_site_owner_text = t('Change owner');
 
+  $vsite = spaces_get_space();
+
+  global $user;
+
+  // Checks if the logged user is the VSite owner or can change owner.
+  $can_change_owner = ((bool) ($vsite->group->uid == $user->uid)) || user_access('administer group');
+
   // Load the members accounts.
   $accounts = user_load_multiple(cp_user_get_member_uids($gid));
 
@@ -27,9 +34,7 @@ function cp_user_get_member_rows($gid) {
     // Loads the user's full name-- first and last name.
     $name = _cp_user_get_full_name($account);
 
-    // Checks to see if the user is the admin of this group.
-    $vsite = spaces_get_space();
-    // Checks if the current user is this vsite's author (owner).
+    // Checks if the account belongs to the VSite's owner.
     $is_owner = (bool) ($vsite->group->uid == $account->uid);
 
     // If the user is the owner, return a special row with no edit links.
@@ -39,7 +44,7 @@ function cp_user_get_member_rows($gid) {
       $status_edit_link = '';
 
       $options = array('attributes' => array('class' => array('cp-user-change-site-owner')));
-      $change_ownership = l($change_site_owner_text, "cp/users/change_site_owner", $options);
+      $change_ownership = $can_change_owner ? l($change_site_owner_text, "cp/users/change_site_owner", $options) : '';
 
       $options = array('attributes' => array('class' => array('cp-user-float-right')));
       $role_edit_link = l($role_edit_text, "cp/users/edit_membership/{$account->uid}", $options);

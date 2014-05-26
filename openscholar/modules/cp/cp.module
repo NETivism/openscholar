@@ -308,10 +308,14 @@ function cp_custom_theme() {
  * Returns TRUE/FALSE, whether or not to use cp theme.
  */
 function cp_use_cp_theme() {
+  $ops = array('edit', 'usage', 'delete', 'devel');
   if (in_array(arg(0), array('cp', 'os', 'media'))) {
     return TRUE;
   } elseif (in_array(arg(0), array('file', 'node'))) {
-    return (arg(1) == 'add' || in_array(arg(2), array('edit', 'usage', 'delete')));
+    return (arg(1) == 'add' || in_array(arg(2), $ops));
+  }
+  elseif (arg(0) == 'taxonomy') {
+    return (arg(2) == 'add' || in_array(arg(3), $ops));
   }
 
   return FALSE;
@@ -502,6 +506,9 @@ function cp_cp_settings() {
         '#access' => user_access('administer varnish'),
       ),
     );
+    if ($vsite = vsite_get_vsite()) {
+    	$settings['cp_clear_cache']['form']['#access'] = og_user_access('node', $vsite->group->nid, 'clear site cache', NULL, FALSE, TRUE);
+    }
   }
 
   return $settings;
@@ -697,6 +704,19 @@ function _cp_form_alter_remove_redirect_element(&$form) {
 }
 
 /**
+ * Activates the cp context on any entity edit form
+ */
+function cp_form_alter(&$form, $form_state) {
+  if (isset($form['#entity_type']) && isset($form['#bundle'])) {
+    if ($plugin = context_get_plugin('condition', 'node')) {
+      // we want some of the node condition, but it only works for actual node types
+      // fake it for every entity form.
+      $plugin->execute((object)array('type' => 'page'), 'form');
+    }
+  }
+}
+
+/**
  * Returns a render array for listing all of this site's redirects.
  */
 function _cp_settings_form_redirects_build($form) {
@@ -850,4 +870,16 @@ function cp_module_implements_alter(&$implementations, $hook) {
   $group = $implementations['cp'];
   unset($implementations['cp']);
   $implementations['cp'] = $group;
+}
+
+/**
+ * Implements hook_og_permission().
+ */
+function cp_og_permission() {
+  return array(
+    'clear site cache' => array(
+      'title' => t('Clear site cache'),
+      'description' => t('Allow the user to clear the site cache for this site.'),
+    ),
+  );
 }

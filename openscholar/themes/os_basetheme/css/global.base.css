@@ -139,6 +139,12 @@ h1.node-title {
 	font-size:1.15em;
 }
 
+.node-teaser .field-name-body h2,
+.node-teaser .field-name-body h3,
+.node-teaser .field-name-body h4 {
+	font-size:1em !important;
+}
+
 .sub_title {
 	display:block;
 	font-size:.75em;
@@ -673,6 +679,15 @@ ul ul ul ul {
   border-bottom:none !important;
 }
 
+div.register-link-teaser {
+  margin-bottom: 0 !important;
+}
+
+div.register-link-teaser .register {
+  font-weight: normal;
+  border-bottom:none !important;
+}
+
 .rss {
 background:url('../images/rss_icon.gif') no-repeat !important;
 padding:3px 0 3px 25px !important;
@@ -905,8 +920,10 @@ header[role=banner],
 span[style*="float: left;"] iframe {
 	padding-right:15px;
 	}
-.lt-ie9	span[style*="FLOAT: RIGHT;"] iframe,
-span[style*="float: right;"] iframe {
+	
+	
+.lt-ie9	span[style*="FLOAT:"][style*="RIGHT;"] iframe,
+span[style*="float:"][style*="right;"] iframe {
 	padding-left:15px;
 	}
 

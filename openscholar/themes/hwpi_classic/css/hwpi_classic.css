@@ -98,8 +98,9 @@ h1.node-title,
 	margin-bottom: 0;
 }
 
-
-
+#tinymce h2,
+#tinymce h3,
+#tinymce h4,
 #content-column .field-name-body h2,
 #content-column .field-name-body h3,
 #content-column .field-name-body h4 {

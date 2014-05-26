@@ -602,6 +602,9 @@ function os_publications_form_biblio_node_form_alter(&$form, &$form_state) {
   // Adding after build function.
   $form['#after_build'][] = 'os_publications_biblio_rearrange';
 
+  // Adding a submit callback to remove trailing spaces from the title if needed.
+  $form['#validate'][] = 'os_publications_remove_spaces';
+
   // Add classes to "abstract" and "notes" to enable WYSIWYG functionality.
   $wysiwyg_classes = $form['publication_extras']['biblio_tabs']['biblio_full_text']['body'][LANGUAGE_NONE][0]['#attributes']['class'];
   $form['biblio_abst_e']['#attributes']['class'] = $wysiwyg_classes;
@@ -615,6 +618,15 @@ function os_publications_form_biblio_node_form_alter(&$form, &$form_state) {
 
   // Add JS for hover tooltips in biblio node form.
   $form['#attached']['js'][] = drupal_get_path('module', 'os_publications') . '/misc/os_publications_biblio_form_hover.js';
+}
+
+/**
+ * Validate handler; Removes trailing spaces from the title of the publication.
+ */
+function os_publications_remove_spaces(&$form, &$form_state) {
+  // We can't use trim() on the title field value since it contains html tags.
+  $trimmed_title = preg_replace('/\s*&nbsp;/', '', $form_state['values']['title_field'][LANGUAGE_NONE][0]['value']);
+  $form_state['values']['title_field'][LANGUAGE_NONE][0]['value'] = $trimmed_title;
 }
 
 /**

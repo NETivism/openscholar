@@ -916,7 +916,8 @@ ul.pager li.pager-item {
 
 
 /* Custom Person node style for /people page */
-.node-person.node-teaser .field-name-field-email {
+.node-person.node-teaser .field-name-field-email,
+.node-person.node-teaser .field-name-field-phone {
   clear: both;
   float: left;
 }

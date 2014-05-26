@@ -172,6 +172,34 @@ width: 63.1%;
 width: 43%;
 }
 
+/** FIX'S FOR IE8 **/
+.lt-ie9 .five-5x20 > .row-2 > .region {
+	width: 26.3%;
+}
+
+.lt-ie9 .four-4x25 > .panel-row > .region {
+	width: 43%;
+}
+
+.lt-ie9 .two-50 > .region {
+width: 46.2%;
+}
+
+.lt-ie9 .two-66-33 > .region-two-66-33-first,
+.lt-ie9 .two-33-66 > .region-two-33-66-second {
+width: 61.1%;
+}
+
+.lt-ie9 .three-3x33 > .region {
+	width: 29%;
+}
+
+.lt-ie9 .three-50-25-25 > .region-three-50-25-25-first,
+.lt-ie9 .three-25-50-25 > .region-three-25-50-25-second,
+.lt-ie9 .three-25-25-50 > .region-three-25-25-50-third,
+.lt-ie9 .five-5x20 > .row-1 .region {
+width: 41%;
+}	
 
 
 /*** FRONTPAGE PANELS ***/
@@ -600,8 +628,11 @@ ul.class_material_field_class a.class_material_field_class_anchor {
 .views-row {margin-bottom:1.5em;}
 
 
+.block-boxes-os_search_solr_more_like_this .item-list ul li,
 .block-boxes-os_sv_list_box .item-list ul li,
-.block-boxes .block-boxes-os_boxes_manual_list  ul li {margin-bottom:.75em;}
+.block-boxes .block-boxes-os_boxes_manual_list  ul li {
+	margin-bottom:.75em;
+	}
 
 /*
  * First sidebar (on left in LTR languages, on right in RTL)
@@ -1236,6 +1267,11 @@ LIST OF POSTS - PERSON TEASER IN SIDEBAR
 .node.node-person .field-name-field-person-photo {
  	float:left;
      margin-right: 1em;
+}
+
+
+.sidebar .block-boxes-os_sv_list_box .node.node-person.article.modified-in-os_profiles_process_node .pic-bio {
+ 	float:none;
 }
 
 

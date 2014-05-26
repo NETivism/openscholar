@@ -155,7 +155,7 @@ class os_slideshow_box extends os_boxes_default {
     $block['title'] = $block['subject'] = check_plain($this->title);
 
     // Show Add Slide link to admins.
-    if (spaces_access_admin()) {
+    if (($vsite = vsite_get_vsite()) && og_user_access('node', $vsite->id, 'create slideshow_slide content')) {
       $block['content'] = l('Add Slide', 'node/add/slideshow-slide', array(
         'attributes' => array('class' => array('add_new')),
         'query' => array('widget' => $this->delta, 'destination' => current_path()),

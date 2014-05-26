@@ -16,7 +16,7 @@ function os_publications_filter_default_formats() {
     'name' => 'Title Filter',
     'cache' => 1,
     'status' => 1,
-    'weight' => 0,
+    'weight' => -9,
     'filters' => array(
       'filter_html' => array(
         'weight' => -10,

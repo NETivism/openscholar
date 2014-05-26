@@ -368,6 +368,90 @@ function os_pages_node_view_alter(&$build, $type) {
 }
 
 /**
+ * Implements hook_translated_menu_link_alter().
+ *
+ * Allows users to see unpublished page if they have permission to do so
+ */
+function os_pages_translated_menu_link_alter(&$link, $map) {
+  if ($link['router_path'] == 'node/%') {
+    if (!$link['access']) {
+      // we can assume this is an unpublished or deleted node
+      // we should run proper access checks on it to determine if the user can access the node or not
+      if (_menu_load_objects($link, $map)) {
+        // we know for sure the node is unpublished now. You can't load a deleted node
+        _menu_check_access($link, $map);
+        if ($link['access']) {
+          _menu_item_localize($link, $map, TRUE);
+          $link['localized_options']['attributes']['class'][] = 'unpublished';
+        }
+      }
+    }
+    else {
+      // children check
+      $visible_children = _os_pages_get_link_children($link, true);
+      $link['has_children'] = (int) !empty($visible_children);
+    }
+  }
+}
+
+/**
+ * Finds all the children of a given link that the user can see.
+ * We use this to set the 'has_children' flag on a conditional basis
+ */
+function _os_pages_get_link_children($link, $can_access = false) {
+  static $links = array();
+
+  $mlid = $link['mlid'];
+  if (!isset($links[$mlid])) {
+    $query = db_select('menu_links', 'ml', array('fetch' => PDO::FETCH_ASSOC));
+    $query->addTag('translatable');
+    $query->leftJoin('menu_router', 'm', 'm.path = ml.router_path');
+    $query->fields('ml');
+    $query->fields('m', array(
+      'load_functions',
+      'to_arg_functions',
+      'access_callback',
+      'access_arguments',
+      'page_callback',
+      'page_arguments',
+      'type',
+      'description',
+    ));
+    $query->condition('plid', $mlid)
+          ->condition('hidden', 0);
+
+    $links[$mlid] = array();
+    foreach ($query->execute() as $item) {
+      $links[$mlid][] = $item;
+    }
+  }
+
+  if (!$can_access) {
+    return $links[$mlid];
+  }
+
+  $return = array();
+  foreach ($links[$mlid] as $item) {
+    $map = explode('/', $item['link_path']);
+    if ($map[0] == 'node') {
+      $q = db_select('node', 'n')
+        ->condition('nid', $map[1])
+        ->fields('n', array('status'));
+
+      //if (user_access('view unpublished '))
+      if (_menu_load_objects($link, $map)) {
+        // we know for sure the node is unpublished now. You can't load a deleted node
+        _menu_check_access($link, $map);
+        if ($link['access']) {
+          $return[] = $link;
+        }
+      }
+    }
+  }
+  return $return;
+}
+
+/**
  * Implements hook_form_BASE_FORM_ID_alter() for node_form.
  */
 function os_pages_form_page_node_form_alter(&$form, &$form_state) {
@@ -447,19 +531,29 @@ function os_pages_form_cp_layout_full_form_alter(&$form, &$form_state) {
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ *
  * Alters the node delete confirm form to redirect to the parent page
  */
 function os_pages_form_node_delete_confirm_alter(&$form, &$form_state) {
+  // When the destination is empty that mean we came here from the delete
+  // button in the node edit form. We need to change the cancel href to the node
+  // edit form.
+  if (empty($_GET['destination'])) {
+    $form['actions']['cancel']['#href'] = 'node/' . $form['#node']->nid . '/edit';
+  }
+
   // plid is empty when it's the top level of the outline
   // we only want to redirect when it isn't empty
-  if ($form['#node']->type == 'page' && $form['#node']->book['plid']) {
+  if ($form['#node']->type == 'page' && !empty($form['#node']->book) && $form['#node']->book['plid']) {
     $form['#submit'][] = 'os_pages_node_delete_redirect';
   }
 }
 
 /**
  * Redirect to the parent page when the page node is deleted.
- * We have to do it in a submit handler because node_delete_confirm_submit hard codes it the redirect to <front>
+ * We have to do it in a submit handler because node_delete_confirm_submit hard
+ * codes it the redirect to <front>.
  */
 function os_pages_node_delete_redirect($form, &$form_state) {
   $link = menu_link_load($form['#node']->book['plid']);
@@ -649,6 +743,9 @@ function os_pages_node_submit(&$node, $form, &$form_state) {
     $parent_id = $form['#book_parent_node'];
     os_pages_make_subpage($node, $parent_id);
   }
+  if (isset($node->book['bid'])) {
+    $node->book['options']['alter'] = true;
+  }
 }
 
 /**
@@ -659,6 +756,7 @@ function os_pages_make_subpage(&$node, $parent_id) {
   $parent = node_load($parent_id);
   if (!isset($parent->book)) {
     $parent->book['bid'] = 'new';
+    $parent->book['options']['alter'] = true;
     book_node_update($parent);
   }
 
@@ -668,6 +766,9 @@ function os_pages_make_subpage(&$node, $parent_id) {
   $node->book['bid'] = $parent->book['bid'];
   $node->book['plid'] = $parent->book['mlid'];
   $node->book['menu_name'] = $parent->book['menu_name'];
+
+  // Allows us to control whether unpublished nodes appear
+  $node->book['options']['alter'] = true;
 }
 
 /**
@@ -712,6 +813,8 @@ function os_pages_preprocess_page(&$page) {
     $section_links['page-header'] = array(
       'title' => t('This Page'),
     );
+
+    $page['classes_array'][] = 'os_pages-section-'.$node->book['bid'];
   }
 
   $section_links['page-layout'] = array(
@@ -787,7 +890,7 @@ function os_pages_add_subpage_form($form, &$form_state, $node) {
     'cancel' => array(
       '#type' => 'submit',
       '#limit_validation_errors' => array(),
-      '#submit' => 'os_pages_cancel_form',
+      '#submit' => array('os_pages_cancel_form'),
       '#value' => t('Cancel'),
     )
   );
@@ -819,8 +922,9 @@ function os_pages_add_subpage_submit($form, &$form_state) {
  * From cancel buttons
  * Close the overlay without doing anything
  */
-function os_pages_cancel_form() {
+function os_pages_cancel_form($form, &$form_state) {
   overlay_close_dialog();
+  $form_state['no_redirect'] = true;
 }
 
 /**

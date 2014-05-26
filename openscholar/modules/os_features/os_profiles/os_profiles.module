@@ -316,7 +316,8 @@ function os_profiles_field_access($op, $field, $entity_type, $entity, $account) 
     $fields = array('field_uuid', 'field_original_destination_url', 'field_destination_url');
 
     // When the node is listening to other node, hide the field we syncing.
-    if (!empty($entity->field_original_destination_url[$entity->language])) {
+    $wrapper = entity_metadata_wrapper('node', $entity);
+    if ($wrapper->field_original_destination_url->value()) {
       $fields = array_merge($fields, os_profiles_profiles_fields());
     }
 
@@ -833,6 +834,7 @@ function os_profiles_unlink_listeners() {
     ->entityCondition('entity_type', 'node')
     ->propertyCondition('type', 'person')
     ->fieldCondition('field_uuid', 'value', $_GET['UUID'])
+    ->fieldCondition('field_original_destination_url', 'value', $_GET['origin_url'])
     ->execute();
 
   if (!$results['node']) {
@@ -895,6 +897,7 @@ function os_profiles_unlink_listeners() {
  *    'action' => 'unlink',
  *    'uuid' => 'foobar',
  *    'origin_deleted' => TRUE,
+ *    'origin_url' => http://www.example.com/john/node/1.json
  *  );
  * @endcode
  *
@@ -1408,8 +1411,9 @@ function os_profiles_node_delete($node) {
     return;
   }
   else {
+    $arguments['origin_deleted'] = TRUE;
+    $arguments['origin_url'] = url('node/' . $node->nid . '.json', array('absolute' => TRUE));
     foreach ($destinations as $destination) {
-      $arguments['origin_deleted'] = TRUE;
       os_profiles_manage_synced_profiles($destination, $arguments);
     }
   }

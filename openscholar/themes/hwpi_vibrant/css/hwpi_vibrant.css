@@ -365,24 +365,32 @@ h1#page-title {
   padding: 15px 0 30px;
 }
 
-#content-column .field-name-body h2, #content-column .field-name-body h3, #content-column .field-name-body h4 {
+#tinymce h2,
+#tinymce h3,
+#tinymce h4,
+#content-column .field-name-body h2, 
+#content-column .field-name-body h3, 
+#content-column .field-name-body h4 {
     margin-bottom: 16px;
 }
 
+
+#tinymce h2,
 #content-column .field-name-body h2 {
     font-size: 1.7em;
 }
 
+#tinymce h3,
 #content-column .field-name-body h3 {
     font-size: 1.4em;
 }
 
-
+#tinymce h4,
 #content-column .field-name-body h4 {
     font-size: 1.2em;
 }
 
-
+#tinymce,
 .node-type-person #content-column .node-person h1.node-title {
     font-weight: bold;
 }

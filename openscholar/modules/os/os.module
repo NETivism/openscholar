@@ -867,7 +867,9 @@ function os_form_alter(&$form, &$form_state, $form_id) {
   // /people
   if ($form_id == 'node_delete_confirm') {
     $paths = os_get_app_path();
-    $_GET['destination'] = $paths[$form['#node']->type];
+    if (isset($paths[$form['#node']->type])) {
+      $_GET['destination'] = $paths[$form['#node']->type];
+    }
   }
 
   // Add a cancel link to node forms.
@@ -967,12 +969,15 @@ function os_form_node_form_alter(&$form, $form_state) {
       'attributes' => array(
         'class' => array('os-delete-link', 'os-' . $form['#node']->type . '-delete-link'),
       ),
-      // We add this to make the "cancel" link on the node delete confirm form
-      // to redirect us back to the node edit form.
-      'query' => array(
-        'destination' => 'node/' . $form['#node']->nid . '/edit',
-      ),
     );
+
+    if ($form['#node']->type != 'page') {
+      // We add this to make the "cancel" link on the node delete confirm form
+      // to redirect us back to the node edit form. For pages we add this in
+      // os_pages_form_node_delete_confirm_alter().
+      $options['query']['destination'] = 'node/' . $form['#node']->nid . '/edit';
+    }
+
     $delete = array(
       '#type' => 'item',
       '#markup' => l($text, 'node/' . $form['#node']->nid . '/delete', $options),

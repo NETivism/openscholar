@@ -312,18 +312,24 @@ function cp_user_og_ui_admin_permissions($variables) {
     }
 
     if (!in_array($key, array_keys($allowed_permissions))) {
-      // Do not show this permission in the UI.
-      // Not including it in the table is not enough, because later we call the
-      // function drupal_render_children() which will render it anyway unless
-      // we unset it.
-      unset($form['permission'][$key]);
-
-      // We must also unset all the checkboxes related to the permission, one
-      // for each role, so they would not be rendered later.
-      foreach (element_children($form['checkboxes']) as $rid) {
-        unset($form['checkboxes'][$rid][$key]);
-      }
-      continue;
+      
+    	if(!user_access('administer permissions')) {
+        // Do not show this permission in the UI.
+        // Not including it in the table is not enough, because later we call the
+        // function drupal_render_children() which will render it anyway unless
+        // we unset it.
+        unset($form['permission'][$key]);
+      		
+        // We must also unset all the checkboxes related to the permission, one
+        // for each role, so they would not be rendered later.
+        foreach (element_children($form['checkboxes']) as $rid) {
+        	unset($form['checkboxes'][$rid][$key]);
+        }
+        continue;
+    	} else {
+        // This is an super-admin type user
+        $form['permission'][$key]['#markup'] .= " **Admin Only**";
+    	}
     }
 
     $row = array();

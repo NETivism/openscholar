@@ -184,6 +184,12 @@ body.no-sidebars .content-top-slideshow-enabled #content-panels .region-content-
     color: #FFF;
 }
 
+
+.bythenumbs {
+	width:800px;
+	margin:0 auto;
+}
+
 .custhtml.bythenumbs h3.custheader {
 	margin-bottom: 13px;
 }
@@ -354,18 +360,44 @@ line-height: 24px;
 
 /* STATS SECTION */
 
+
+#realtime-vis,
+#top-stats {
+	display:inline-block;
+	clear:none;
+}
+
+#realtime-vis {
+	width:188px;
+	background:url('/profiles/openscholar/themes/custom/osharvard_theme/images/real-time-bg.png') no-repeat #F6F6F6;
+	vertical-align:top;
+	height:248px;
+}
+
+.ossap-stats-real-time-visitors {
+font-size: 3em;
+color: #818181;
+display: block;
+margin: 115px auto;
+text-align: center;
+font-weight: bold;
+}
+
 #osactivity,
 ul#firstset,
 ul#secondset {
 	background:#F6F6F6;
 	width:600px;
-	margin:0 auto;
-}
+	}
 
 ul#secondset {
 	background:#FFF;
 }
 
+ul#secondset,
+ul#firstset {
+	margin:0 0 .2em 8px;
+}
 
 ul#secondset li,
 ul#firstset li {
@@ -482,13 +514,24 @@ li#servertime span {
 		
 	
 #osactivity {
-background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/statsbgs/whatshappening.png") no-repeat scroll 225px 9px #F6F6F6;
- padding: 25px 12px 5px;
+ padding: 2px 12px 5px;
 margin-top: 3px;
-width: 575px;
+margin-bottom: 7px;
+width: 772px;
 }
 
+#most-viewedpages h4,
+#most-viewedsites h4,
+#osactivity h4 {
+	display:block;
+	margin:0 auto;
+	font-size:12px;
+	text-align:center;
+	margin-bottom: 3px;
+}
 
+#most-viewedpages ul,
+#most-viewedsites ul,
 #osactivity ul {
 margin-left:0;
 margin-bottom:0;
@@ -501,6 +544,55 @@ padding-left:35px;
 }
 
 #osactivity .time {float:left;color:#666;margin-right:5px;}
+
+
+
+
+.top-visited ul {
+	height:225px;
+	width: 380px;
+	overflow:auto;
+}
+
+#most-viewedpages,
+#most-viewedsites {
+	background:#F6f6f6;
+ padding: 2px 12px 5px;
+margin-top: 3px;
+width: 368px;
+display:inline-block;
+vertical-align: top;
+font-size:12px;
+}
+
+#most-viewedpages a,
+#most-viewedsites a {
+	margin-right:8px;
+	font-size:1.2em;
+}
+
+#most-viewedsites {
+margin-right:8px;
+}
+
+#most-viewedsites ul li,
+#most-viewedpages ul li {
+margin-bottom:5px;
+}
+
+
+#most-viewedsites ul li {
+list-style-type:none;
+background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/sprite.png") 0 0 no-repeat;
+padding-left:35px;
+}
+
+#most-viewedpages ul li {
+list-style-type:none;
+background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/sprite.png") 0 -30px no-repeat;
+padding-left:35px;
+}
+
 
 .region-content-first .block-boxes .os-embed-link {
     width: 250px;

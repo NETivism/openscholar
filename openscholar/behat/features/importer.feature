@@ -42,3 +42,8 @@ Feature: Testing the importer.
     Given I visit "john/news"
      Then I should see "Text in spanish"
       And I should see "Speaker: Luis Mendonça de Carvalho"
+
+  @api @first
+  Scenario: Verify the year of a class is imported correctly.
+    Given I visit "john/classes"
+     Then I should see "1950"
