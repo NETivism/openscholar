@@ -1897,7 +1897,7 @@ function os_taxonomy_og_fields_info() {
         ),
       ),
       'entity_type' => 'taxonomy_term',
-      'field_name' => 'field_show_description',
+      'field_name' => 'show_description',
       'label' => 'Show description',
       'required' => 0,
       'settings' => array(

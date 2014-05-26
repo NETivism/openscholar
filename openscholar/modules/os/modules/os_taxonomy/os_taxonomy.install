@@ -39,7 +39,7 @@ function os_taxonomy_update_7003(&$sandbox) {
   $progress = $sandbox['sandbox']['progress'];
 
   for ($index = $progress; ($index <= $progress + $batch) && ($index <= $sandbox['sandbox']['max']); $index++) {
-    $machine_name = $sandbox['context']['info'][$index];
+    $machine_name = $sandbox['sandbox']['info'][$index];
     $sandbox['message'] = t('Adding required field to vocabulary @machine_name', array('@machine_name' => $machine_name));
     og_create_field('show_description', 'taxonomy_term', $machine_name);
     $sandbox['sandbox']['progress'] = $index;
