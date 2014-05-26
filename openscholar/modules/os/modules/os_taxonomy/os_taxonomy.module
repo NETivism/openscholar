@@ -1830,11 +1830,10 @@ function os_taxonomy_field_widget_form_alter(&$element, &$form_state, $context) 
  * When creating a new vocabulary attach the right fields.
  */
 function os_taxonomy_field_attach_create_bundle($entity_type, $bundle) {
-  switch ($entity_type) {
-    case 'taxonomy_term' :
-      os_taxonomy_attach_fields_to_vocabulary('taxonomy_term', $bundle);
-      break;
+  if ($entity_type != 'taxonomy_term') {
+    return;
   }
+  os_taxonomy_attach_fields_to_vocabulary('taxonomy_term', $bundle);
 }
 
 /**
@@ -1842,7 +1841,6 @@ function os_taxonomy_field_attach_create_bundle($entity_type, $bundle) {
  *
  * @param $entity_type
  *   The entity type of the bundle we want to attach the field to
- *
  * @param $bundle
  *   The bundle to attach the fields to.
  */
@@ -1858,7 +1856,6 @@ function os_taxonomy_og_fields_info() {
   $items['show_description'] = array(
     'type' => array('group content'),
     'description' => t('Show taxonomy term description.'),
-    // Showing description can be done only on taxonomy term entity.
     'entity' => array('taxonomy_term'),
     'field' => array(
       'active' => 1,
@@ -1877,7 +1874,6 @@ function os_taxonomy_og_fields_info() {
       'settings' => array('allowed_values' => array(0 => '', 1 => '',),'allowed_values_function' => '',),
       'translatable' => 0,
       'type' => 'list_boolean',
-//      'no_ui' => TRUE,
     ),
     'instance' => array(
       'default_value' => array(
