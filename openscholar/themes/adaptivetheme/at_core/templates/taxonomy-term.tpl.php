@@ -42,11 +42,6 @@
  * @see template_process()
  */
 ?>
-<?php if ($show_description): ?>
-  <div>
-    <?php print $description; ?>
-  </div>
-<?php endif; ?>
 <?php if ($content = render($content)): ?>
 <article id="taxonomy-term-<?php print $term->tid; ?>" class="<?php print $classes; ?>"<?php print $attributes; ?>>
   <?php print render($title_prefix); ?>
