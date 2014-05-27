@@ -1885,10 +1885,10 @@ function os_taxonomy_og_fields_info() {
       'description' => 'Define whether the term description will be seen in the term page.',
       'display' => array(
         'default' => array(
-          'label' => 'above',
+          'label' => 'hidden',
           'module' => 'list',
           'settings' => array(),
-          'type' => 'list_default',
+          'type' => 'hidden',
           'weight' => 0,
         ),
       ),
