@@ -245,6 +245,13 @@ class FeatureContext extends DrupalContext {
     $element = $this->getSession()->getPage();
     print_r($element->getContent());
   }
+  /**
+   * @Then /^I should print page to "([^"]*)"$/
+   */
+  public function iShouldPrintPageTo($file) {
+    $element = $this->getSession()->getPage();
+    file_put_contents($file, $element->getContent());
+  }
 
   /**
    * @Then /^I should see the images:$/
