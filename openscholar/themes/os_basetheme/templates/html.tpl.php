@@ -7,7 +7,7 @@
 <head>
 <?php print $head; ?>
 <title><?php print $head_title; ?></title>
-<meta http-equiv="x-ua-compatible" content="IE=8">
+<meta http-equiv="x-ua-compatible" content="IE=edge">
   <?php if ($use_responsive_behaviors): ?>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <?php else: ?>

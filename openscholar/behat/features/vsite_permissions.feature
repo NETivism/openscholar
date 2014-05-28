@@ -62,6 +62,24 @@ Feature:
      When I visit "john/publications"
      Then I should not see the link "Links" under "ctools-dropdown-link-wrapper"
 
+  @api @last
+  Scenario: Testing vsite owner cannot delete its own vsite, only to request a delete.
+    Given I am logging in as "john"
+     When I visit "user"
+      And I should see "Delete site"
+      And I click "Delete site"
+     Then I should see "Delete website request"
+      And I should not see "This action cannot be undone"
+
+  @api @last
+  Scenario: Testing admin can delete vsite.
+    Given I am logging in as "admin"
+     When I visit "users/john"
+      And I should see "Delete site"
+      And I click "Delete site"
+     Then I should not see "Delete website request"
+      And I should see "This action cannot be undone"
+
 # content editor
   @api @last
   Scenario: Testing content editor can edit any content on his group.

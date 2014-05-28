@@ -1,3 +1,2 @@
-First name,Middle name,Last name,Titles,Address,Phone,Email,Websites title,Websites url,Short bio,Files
-Homer,J,Simpson,Safety Inspector,742 Evergreen Terrace Springfield,555-1234,homer@snpp.com,Homer's website,http://www.homersimpson.com,Father for 3 and married to Marge Simpson,http://college.harvard.edu/sites/default/files/harvard-fy.pdf
-
+First name,Middle name,Last name,Photo,Titles,Address,Phone,Email,Websites title,Websites url,Short bio,Files
+Homer,J,Simpson,https://fbcdn-profile-a.akamaihd.net/hprofile-ak-ash3/t5.0-1/50273_37284364481_412211_n.jpg,Safety Inspector,742 Evergreen Terrace Springfield,555-1234,homer@snpp.com,Homer's website,http://www.homersimpson.com,Father for 3 and married to Marge Simpson,http://college.harvard.edu/sites/default/files/harvard-fy.pdf

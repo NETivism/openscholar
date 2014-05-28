@@ -98,6 +98,7 @@ features[user_permission][] = edit own personal content
 features[user_permission][] = edit own project content
 features[user_permission][] = manage group space
 features[user_permission][] = subscribe as support team
+features[user_permission][] = delete vsite
 features[user_permission][] = view users outside groups
 features[user_role][] = support team
 features[variable][] = comment_anonymous_vsite

@@ -635,3 +635,10 @@ function vsite_update_7023() {
     og_role_grant_permissions($rid, $permissions);
   }
 }
+
+/**
+ * Grant permission for the support team to delete a vsite.
+ */
+function vsite_update_7024() {
+  features_revert(array('vsite' => array('user_permission')));
+}

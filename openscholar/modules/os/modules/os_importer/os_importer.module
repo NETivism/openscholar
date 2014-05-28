@@ -890,3 +890,44 @@ function _os_importer_create_vocab($name, $terms, $group_type, $gid, $entity_typ
 function os_importer_form_biblio_import_form_alter(&$form, $form_state) {
   $_GET['destination'] = 'cp/os-importer/biblio';
 }
+
+/**
+ * Implements hook_feeds_processor_targets_alter().
+ */
+function os_importer_feeds_processor_targets_alter(&$targets, $entity_type, $bundle_name) {
+  if ($bundle_name != 'person') {
+    return;
+  }
+
+  $targets['person_photo'] = array(
+    'name' => t('Personal photo'),
+    'description' => t('Importing a personal photo from external soource.'),
+    'callback' => 'os_importer_import_person_photo',
+  );
+}
+
+/**
+ * Feeds callback; Importing a personal picture from external source.
+ *
+ * @param $source
+ *   Field mapper source settings.
+ * @param $entity
+ *   An entity object, for instance a node object.
+ * @param $target
+ *   A string identifying the target on the node.
+ * @param $value
+ *   The value to populate the target with.
+ * @param $mapping
+ *  Associative array of the mapping settings from the per mapping
+ *  configuration form.
+ */
+function os_importer_import_person_photo($source, $entity, $target, $value, $mapping) {
+  $file = os_copy_file($value);
+  $dimensions = array(
+    'cropbox_x' => 0,
+    'cropbox_y' => 0,
+    'cropbox_height' => 0,
+    'cropbox_width' => 0,
+  );
+  os_profiles_insert_image($entity, $file['file'], $dimensions, FALSE);
+}

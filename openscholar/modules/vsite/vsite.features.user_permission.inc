@@ -207,6 +207,16 @@ function vsite_user_default_permissions() {
     'module' => 'vsite',
   );
 
+  // Exported permission: 'delete vsite'.
+  $permissions['delete vsite'] = array(
+    'name' => 'delete vsite',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'support team' => 'support team',
+    ),
+    'module' => 'vsite',
+  );
+
   // Exported permission: 'view users outside groups'.
   $permissions['view users outside groups'] = array(
     'name' => 'view users outside groups',

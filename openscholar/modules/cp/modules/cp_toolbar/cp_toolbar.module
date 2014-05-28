@@ -278,7 +278,11 @@ function cp_toolbar_fill_drawer() {
   $app_info = os_app_info();
   foreach ($bundles as $type => $name) {
     foreach ($app_info as $info) {
-      if (!empty($info['require_parent_node'][$type]) || !empty($info['hide from toolbar']) && is_array($info['hide from toolbar']) && in_array($type, $info['hide from toolbar'])) {
+      // A link for adding a node in the CP will not be displayed in case it has
+      // a parent node type or it is defined to be hidden from to toolbar.
+      $require_parent_node = !empty($info['require_parent_node'][$type]);
+      $hide_type = !empty($info['hide from toolbar']) && is_array($info['hide from toolbar']) && in_array($type, $info['hide from toolbar']);
+      if ($require_parent_node || $hide_type) {
         continue 2;
       }
     }

@@ -299,7 +299,7 @@ function os_events_process_node(&$variables) {
     }
   }
   elseif ($registrations_type) {
-    $register = t('Sorry, the event is full');
+    $register = '<span class="register-event-full">' . t('Sorry, the event is full') . '</span>';
   }
 
   if ($variables['page']) {
@@ -441,8 +441,8 @@ function os_events_modal_submit($form, &$form_state) {
   // In case event is full update the register links via ajax.
   $event = node_load($form_state['registration']->entity_id);
   if (!os_events_event_registration_reach_capacity($event)) {
-    $commands[] = ajax_command_html('.register-link-teaser', t('Sorry, the event is full'));
-    $commands[] = ajax_command_html('.os_events_export_links .first', t('Sorry, the event is full'));
+    $commands[] = ajax_command_html('.register-link-teaser', '<span class="register-event-full">' . t('Sorry, the event is full') . '</span>');
+    $commands[] = ajax_command_html('.os_events_export_links .first', '<span class="register-event-full">' . t('Sorry, the event is full') . '</span>');
   }
 
   // Clean any message.
@@ -782,7 +782,7 @@ function os_events_form_registration_entity_settings_form_alter(&$form, $form_st
   $close_date = $form['scheduling']['close']['#default_value'];
   $reminder_date = $form['reminder']['reminder_settings']['reminder_date']['#default_value'];
 
-  $format = 'M d Y H:i';
+  $format = 'M d Y h:i A';
   // Replace textual date fields in favor of date popup.
   $form['scheduling']['open'] = array(
     '#type' => 'date_popup',
@@ -909,6 +909,9 @@ function os_events_menu_alter(&$items) {
 function os_events_form_registration_registrations_broadcast_form_alter(&$form, $form_state) {
   // Hide the tokens list for sending messages to registrants.
   unset($form['token_tree']);
+
+  // Extend the length of the "subject" field.
+  $form['subject']['#maxlength'] = 150;
 }
 
 /**

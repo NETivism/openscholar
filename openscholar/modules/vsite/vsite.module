@@ -415,8 +415,7 @@ function vsite_alias_has_purl_prefix($alias, $vsite_id) {
  */
 function vsite_form_node_delete_confirm_alter(&$form, $form_state) {
   $node = $form['#node'];
-  $group_types = array_keys(array_intersect(module_invoke_all('vsite_og_node_type_info'), array('group')));
-  if (!in_array($node->type, $group_types)) {
+  if (!og_is_group_type('node', $node->type)) {
     // Not a group node.
     return;
   }
@@ -562,29 +561,45 @@ function vsite_group_default_homepage_value($entity_type, $entity, $field, $inst
 /**
  * Implements hook_node_access().
  *
- * Deny access to create node outside of a VSite for non-privileged user. Also
- * deny access to creating groups from within a VSite (e.g.
+ * Deny access to create node outside of a VSite for non-privileged user.
+ * Deny access to creating groups from within a VSite (e.g.
  * john/node/add/personal) as they are handled via site/register.
+ * Deny access to deleting vsite for non-privileged user.
  */
 function vsite_node_access($node, $op, $account) {
-  if ($op != 'create' || user_access('administer group')) {
-    return NODE_ACCESS_IGNORE;
+  switch ($op) {
+    // Handle 'create' cases:
+    case 'create':
+      if (user_access('administer group', $account)) {
+        return NODE_ACCESS_IGNORE;
+      }
+      if (og_is_group_type('node', $node)) {
+        // Deny direct access to creating groups.
+        return NODE_ACCESS_DENY;
+      }
+      if (!$vsite = vsite_get_vsite()) {
+        // Deny access when outside of VSite.
+        return NODE_ACCESS_DENY;
+      }
+      // Check the user's permission to create new content in the current VSite.
+      return !og_user_access('node', $vsite->group->nid, 'create ' . $node . ' content', $account) ? NODE_ACCESS_DENY : NODE_ACCESS_IGNORE;
+      break;
+
+    // Handle 'delete' cases:
+    case 'delete':
+      if (!og_is_group_type('node', $node->type)) {
+        // Ignore deletion of non-groups.
+        return NODE_ACCESS_IGNORE;
+      }
+      return !user_access('delete vsite', $account) ? NODE_ACCESS_DENY : NODE_ACCESS_IGNORE;
+      break;
+
+    // Ignore any other operator:
+    default:
+      return NODE_ACCESS_IGNORE;
   }
 
-  // @todo: Just remove from the permissions list?
-  $group_types = array_keys(array_intersect(module_invoke_all('vsite_og_node_type_info'), array('group')));
-  if (in_array($node,  $group_types)) {
-    // Deny direct access to creating groups.
-    return NODE_ACCESS_DENY;
-  }
 
-  if (!$vsite = vsite_get_vsite()) {
-    // Deny access when outside of VSite.
-    return NODE_ACCESS_DENY;
-  }
-
-  // Check the user's permission to create new content in the current VSite.
-  return !og_user_access('node', $vsite->group->nid, 'create ' . $node . ' content', $account) ? NODE_ACCESS_DENY : NODE_ACCESS_IGNORE;
 }
 
 /**
@@ -856,7 +871,11 @@ function vsite_permission(){
     'subscribe as support team' => array(
       'title' => t('Subscribe as support team'),
       'description' => t('Allow users to subscribe as a supporter.')
-    )
+    ),
+    'delete vsite' => array(
+      'title' => t('Delete VSite'),
+      'description' => t('Allow users to delete vsite.')
+    ),
   );
 }
 
@@ -1596,16 +1615,62 @@ function vsite_load_user_sites($user_id) {
     $items = array();
     $items[] = l($node->title, $site->get_absolute_url());
     if (node_access('delete', $node)) {
-      $items[] = array(
-        'data' => l(t('Delete site'), $site->get_absolute_url('node/' . $node->nid . '/delete')),
-        'class' => 'delete-link',
-      );
+      $delete_link = l(t('Delete site'), $site->get_absolute_url('node/' . $node->nid . '/delete'));
     }
+    else {
+      $delete_link = vsite_delete_vsite_modal(array(
+        'text' => t('Delete site'),
+        'href' => $site->get_absolute_url('vsite/delete/' . $node->nid),
+        'class' => 'delete-link',
+        'modal_settings' => array(
+          'modalSize' => array(
+            'type' => 'fixed',
+            'width' => 700,
+            'height' => 220,
+            'addWidth' => 0,
+            'addHeight' => 0,
+            'contentRight' => 0,
+            'contentBottom' => 0,
+          ),
+          'modalOptions' => array('opacity' => .6),
+          'animation' => 'fadeIn',
+        ),
+      ));
+    }
+    $items[] = array(
+      'data' => $delete_link,
+      'class' => 'delete-link',
+    );
     // Prepare them for theme_list_item.
     $sites_array[] = theme('item_list', array('items' => $items, 'attributes' => array('class' => array('inline'))));
   }
 
   return $sites_array;
+}
+
+/**
+ * Utility function; create a text button to open a ctools modal.
+ *
+ * @param $info
+ *   Modal configuration array.
+ *
+ * @return string
+ *   Link button.
+ */
+function vsite_delete_vsite_modal($info) {
+  // Include the CTools tools that we need.
+  ctools_include('ajax');
+  ctools_include('modal');
+  ctools_modal_add_js();
+
+  // Ctools modal settings.
+  $modal_settings = array(
+    $info['class'] => $info['modal_settings'],
+  );
+  drupal_add_js($modal_settings, 'setting');
+
+  $href = $info['href'] . '/nojs';
+  return ctools_modal_text_button($info['text'], $href, '', 'ctools-modal-' . $info['class']);
 }
 
 /**
@@ -1644,6 +1709,8 @@ function vsite_load_user_membership($user_id){
  */
 function vsite_user_view_alter(&$build){
   global $user;
+  ctools_include('modal');
+  ctools_modal_add_js();
 
   // Removal section.
   // Remove the "history" and "member for" info if it's there.
@@ -2061,7 +2128,91 @@ function vsite_menu(){
     'access arguments' => array('access user profiles'),
   );
 
+  // VSite delete modal.
+  $items['vsite/delete/%node/%ctools_js'] = array(
+    'type' => MENU_CALLBACK,
+    'title' => t('Delete website request'),
+    'page callback' => 'vsite_delete_request',
+    'page arguments' => array(2, 3),
+    'access callback' => 'vsite_delete_request_access',
+    'access arguments' => array(2),
+    'description' => t('Delete VSite'),
+  );
+
   return $items;
+}
+
+/**
+ * Page callback; Sending VSite delete request.
+ *
+ * @param $node
+ *   VSite node to delete.
+ * @param $ajax
+ *   Either AJAX or not.
+ *
+ * @return array|mixed
+ *   Nothing in case of AJAX (print and exit), form otherwise.
+ */
+function vsite_delete_request($node, $ajax) {
+
+  if (!$ajax) {
+    return drupal_get_form('vsite_vsite_delete_request_form');
+  }
+
+  ctools_include('modal');
+  ctools_include('ajax');
+  drupal_add_css(drupal_get_path('module', 'vsite') . '/css/vsite.css');
+
+  $form_state = array(
+    'title' => t('Delete website request'),
+    'ajax'  => TRUE,
+    'build_info' => array(
+      'args'  => array($node, $ajax),
+    ),
+  );
+
+  $commands = ctools_modal_form_wrapper('vsite_vsite_delete_request_form', $form_state);
+
+  if (!empty($form_state['ajax_commands'])) {
+    $commands = $form_state['ajax_commands'];
+  }
+
+  print ajax_render($commands);
+  drupal_exit;
+}
+
+/**
+ * Delete request form.
+ */
+function vsite_vsite_delete_request_form($form, &$form_state) {
+  $form = array();
+
+  $form['message'] = array(
+    '#markup' => t('Please provide a reason for deleting this website. We will process this request as soon as possible.'),
+  );
+  $form['reason'] = array(
+    '#type' => 'textarea',
+    '#required' => TRUE,
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+
+  $form['cancel'] = array(
+    '#markup' => l(t('Cancel'), "#",  array('attributes' => array('class' => 'ctools-close-modal'))),
+  );
+
+  $form['#submit'][] = 'vsite_vsite_delete_request_submit';
+  return $form;
+}
+
+/**
+ * Access callback.
+ */
+function vsite_delete_request_access($node) {
+  return og_user_access_entity('administer group', 'node', $node);
 }
 
 /**
@@ -2069,12 +2220,12 @@ function vsite_menu(){
  *
  * @return contact_page
  */
-function vsite_site_contact(){
+function vsite_site_contact() {
   if (! ($space = spaces_get_space()) || ! ($user = user_load($space->group->uid))) {
     return MENU_ACCESS_DENIED;
   }
   $space = spaces_get_space();
-  if (! empty($space)) {
+  if (!empty($space)) {
     // Get the vsite_users_contact_form_anonymous varible
     $contact_anon = $space->controllers->variable->get('vsite_users_contact_form_anonymous', 'space');
   }
@@ -2208,7 +2359,7 @@ function vsite_contact_mail_owner($form, &$form_state, $recipient){
 /**
  * Processes the personal contact page form submission.
  */
-function vsite_contact_mail_owner_submit($form, &$form_state){
+function vsite_contact_mail_owner_submit($form, &$form_state) {
   global $user, $language;
 
   $account = $form_state['values']['recipient'];
@@ -2257,6 +2408,43 @@ function vsite_contact_mail_owner_submit($form, &$form_state){
 }
 
 /**
+ * Processes the site delete request form.
+ */
+function vsite_vsite_delete_request_submit($form, &$form_state) {
+  global $user, $language;
+
+  // Just dismiss the modal in case of a cancellation.
+  if ($form_state['clicked_button']['#value'] == 'Cancel') {
+    $form_state['ajax_commands'][] = ctools_modal_command_dismiss();
+    return;
+  }
+
+  // Send to admin
+  $to = variable_get('site_mail', ini_get('sendmail_from'));
+
+  // Save both users and all form values for email composition.
+  $values = $form_state['values'];
+  $values['user'] = $user;
+  $values['node'] = $form_state['build_info']['args'][0];
+
+  // Send the e-mail in the requested user language.
+  drupal_mail('vsite', 'vsite_delete', $to, $language, $values, $user->mail);
+
+  // Dismiss modal.
+  $form_state['ajax_commands'][] = ctools_modal_command_dismiss();
+
+  // Show message using AJAX.
+  // Add new message.
+  drupal_set_message(t('The delete request has been sent.'));
+
+  // Add status messages.
+  $form_state['ajax_commands'][] = ajax_command_before('#columns', theme('status_messages'));
+
+  // Clean messages.
+  drupal_get_messages();
+}
+
+/**
  * Only allows access if user is authenticated and space is set.
  *
  * @return contact_page
@@ -2265,13 +2453,7 @@ function vsite_site_contact_access(){
   if (! ($space = spaces_get_space()) || ! ($user = user_load($space->group->uid))) {
     return FALSE;
   }
-
   return TRUE;
-  /*
-  $contact_anon = $vsite->controllers->variable->get('vsite_users_contact_anonymous');
-  // there was a contact form var here, but I don't know where it's set from
-  return ($contact_anon !== 0 || user_is_logged_in());
-  */
 }
 
 /**
@@ -2304,6 +2486,20 @@ function vsite_mail($key, &$message, $params){
       // This is done so that when the recipient auto-reply is on, the response
       // won't be sent to the site email (held in the site_mail variable).
       $message['headers']['Sender'] = $message['headers']['Return-Path'] = $message['headers']['From'];
+      break;
+
+    case 'vsite_delete' :
+      $reason = check_plain($params['reason']);
+      $node = $params['node'];
+      $user = $params['user'];
+
+      $message['body'][] = t('The user !user asked to delete the site "!site".', array('!user' => $user->name, '!site' => $node->title));
+      $message['body'][] = t('The reason for the delete request was: "!reason".', array('!reason' => $reason));
+      $message['body'][] = t('Please review the request and if approved delete the site via !url.',
+        array('!url' => url('node/' . $node->nid . '/delete', array(
+          'absolute' => TRUE,
+          'language' => $language,
+        ))));
       break;
   }
 }
@@ -2658,6 +2854,9 @@ function vsite_taxonomy_term_presave($term) {
  * Validate handler; Prevent duplicate aliases.
  */
 function vsite_form_alias_validate($form, &$form_state) {
+  // When deleting a term we are still validating the path alias as it is the
+  // still the same form as editing the term. Validation is not needed when a
+  // term is deleted.
   if (!empty($form_state['term']) && $form_state['triggering_element']['#type'] == 'submit' && $form_state['triggering_element']['#value'] == 'Delete') {
     return;
   }

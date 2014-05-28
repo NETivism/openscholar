@@ -711,8 +711,10 @@ function os_profiles_sync_profile_submit($form, $form_state) {
  *  The file object.
  * @param $dimensions
  *  The image field crop settings.
+ * @param $save
+ *  Determine if we need to save the node. Default set to TRUE.
  */
-function os_profiles_insert_image($node, $file, $dimensions) {
+function os_profiles_insert_image($node, $file, $dimensions, $save = TRUE) {
   if (!$file) {
     // The file is empty. Truncating the file field.
     unset($node->field_person_photo[$node->language][0]);
@@ -729,7 +731,9 @@ function os_profiles_insert_image($node, $file, $dimensions) {
     );
   }
 
-  node_save($node);
+  if ($save) {
+    node_save($node);
+  }
 }
 
 /**

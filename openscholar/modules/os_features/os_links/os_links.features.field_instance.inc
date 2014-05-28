@@ -24,6 +24,13 @@ function os_links_field_default_field_instances() {
         'type' => 'text_default',
         'weight' => 0,
       ),
+      'full' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
       'links' => array(
         'label' => 'above',
         'settings' => array(),
@@ -86,6 +93,12 @@ function os_links_field_default_field_instances() {
         'module' => 'link',
         'settings' => array(),
         'type' => 'link_default',
+        'weight' => 1,
+      ),
+      'full' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
         'weight' => 1,
       ),
       'links' => array(
@@ -153,6 +166,13 @@ function os_links_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'default' => array(
+        'label' => 'above',
+        'module' => 'file',
+        'settings' => array(),
+        'type' => 'file_default',
+        'weight' => 4,
+      ),
+      'full' => array(
         'label' => 'above',
         'module' => 'file',
         'settings' => array(),
