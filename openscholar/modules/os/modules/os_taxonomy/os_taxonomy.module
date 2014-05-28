@@ -995,6 +995,13 @@ function theme_os_taxonomy_tagged_nodes($variables) {
   $tagged_item_per_page = variable_get('os_taxonomy_items_per_page', 15);
   $page = !isset($_GET['page']) ? 0 : $_GET['page'];
 
+  // Show description only if set and if this is first page.
+  $show_descriptioon = FALSE;
+  $wrapper = entity_metadata_wrapper('taxonomy_term', $variables['taxonomy_term']);
+  if (!$page && $wrapper && $wrapper->show_description->value()) {
+    $show_descriptioon = TRUE;
+  }
+
   $options = $variables['options'] + array(
     'range' => $tagged_item_per_page,
     'offset' => $page * $tagged_item_per_page,
@@ -1003,8 +1010,7 @@ function theme_os_taxonomy_tagged_nodes($variables) {
     'indentation' => 10,
     'bundles' => array(),
     'view_mode' => 'teaser',
-//      'description' => empty($variables['taxonomy_term']),
-      'description' => TRUE,
+    'description' => $show_descriptioon,
     'child_element' => TRUE,
     'indentation_type' => 'px',
     'attributes' => array(),
