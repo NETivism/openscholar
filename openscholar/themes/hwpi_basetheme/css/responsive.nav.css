@@ -107,6 +107,13 @@
     text-decoration: none;
     transition: none 0s ease 0s;
 }
+
+/* KILL THE DOWN ARROWS IN THE MAIN MENU WHEN IN RESPONSIVE MODE */
+#menu-bar ul.nice-menu .menuparent > a:before {
+background-image: none !important;
+
+}
+
 .nav li, .nav .menu li {
     display: block;
 }
@@ -200,82 +207,88 @@ background: none !important;
 }
 /*Mobile buttons*/	
 .mobile-buttons:after {
-    clear: both;
-    content: ".";
-    display: block;
-    font-size: 0;
-    height: 0;
-    visibility: hidden;
+  clear: both;
+  content: ".";
+  display: block;
+  font-size: 0;
+  height: 0;
+  visibility: hidden;
 }
 ul.mobile-buttons {
-    display: block !important;
+  display: block !important;
 }
 
 .mobile-buttons li {
-    float: left;
-    list-style-type: none;
-    margin: 0;
-    text-align: center;
+  float: left;
+  list-style-type: none;
+  margin: 0;
+  text-align: center;
 }
 .link-count-mobi-main {
-    text-align: left !important;
+  text-align: left !important;
 }
 .link-count-mobi-main a {
-    background: url("../images/icon_menu.png") no-repeat scroll 15px center transparent;
+  background-image: url("../images/hwpi_basesprite.png");
+  background-position: 0 -493px;
 }
+
 .mobile-buttons a {
-    color: #FFFFFF!important;
-display: block;
-font: bold 13px arial,sans-serif;
-height: 22px !important;
-letter-spacing: 1px;
-padding: 8px 12px !important;
-text-decoration: none;
-text-transform: uppercase;
+  color: #FFFFFF!important;
+  display: block;
+  font: bold 13px arial,sans-serif;
+  height: 22px !important;
+  letter-spacing: 1px;
+  padding: 8px 12px !important;
+  text-decoration: none;
+  text-transform: uppercase;
 }
 
 .link-count-mobi-search a {
-padding: 8px 8px !important;
+  padding: 8px 8px !important;
 }
 
 .mobile-buttons a span {
-    font-weight: normal;
-    padding-left: 25px;
+  font-weight: normal;
+  padding-left: 25px;
 }
 .move {
     left: -9999px;
     position: absolute;
 }
+
 * {
-     margin: 0;
-    padding: 0;
-}
-.link-count-mobi-util a {
-    background: url("../images/icon_plus.png") no-repeat scroll center center transparent;
-    min-height: 20px;
+  margin: 0;
+  padding: 0;
 }
 
+.link-count-mobi-util a {
+  background-image: url("../images/hwpi_basesprite.png");
+  background-position: -52px -501px;
+  background-origin: content-box;
+  min-height: 20px;
+}
 
 .link-count-mobi-search a {
-       background: url("../images/icon_search.png") no-repeat scroll center center transparent;
-      min-height: 20px;
+  background-image: url("../images/hwpi_basesprite.png");
+  background-position: -45px -438px;
+  min-height: 20px;
 }
 ul.primary li a {
-    background-color: #F3F3F1;
-    border-color: #E4E4E4;
-    margin-right: 0;
-    padding: 4px;
+  background-color: #F3F3F1;
+  border-color: #E4E4E4;
+  margin-right: 0;
+  padding: 4px;
 }
 
 .table-wrap {
-    overflow: scroll; 
+  overflow: scroll;
 } 
 #search-block-form .container-inline .form-item .form-text {
-    height: 32px!important;
+  height: 32px!important;
 }
 /*Footer*/
 #footer .os-custom-menu {
-    display: block !important;
+  display: block !important;
 }
 }
 

@@ -581,18 +581,62 @@ margin-bottom:5px;
 }
 
 
-#most-viewedsites ul li {
+.most-viewedsites-list li {
 list-style-type:none;
 background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/sprite.png") 0 0 no-repeat;
 padding-left:35px;
 }
 
-#most-viewedpages ul li {
+.most-viewedpages-list li {
 list-style-type:none;
 background: url("/profiles/openscholar/themes/custom/osharvard_theme/images/sprite.png") 0 -30px no-repeat;
 padding-left:35px;
 }
 
+.top-visited {
+	margin-top:6px;
+}
+
+#tab-set,
+#tab-set2 {
+	margin:0 auto;
+	}
+
+#tab-set li,
+#tab-set2 li  {
+display: inline-block;
+list-style-type: none;
+width: 80px;
+height: 22px;
+background: #FFF;
+border:1px solid #efefef;
+text-align: center;
+}
+
+#tab-set li#current,
+#tab-set2 li#current {
+background: #818181;
+
+}
+
+#tab-set li#current a,
+#tab-set2 li#current a {
+color:#FFF;
+background: #818181;
+border:none;
+}
+
+#tab-set li a,
+#tab-set2 li a {
+margin:0 auto;
+text-decoration:none !important;
+font-size:1.1em;
+}
+
+#tab-set li:first-child,
+#tab-set2 li:first-child {
+margin-left:60px;
+}
 
 .region-content-first .block-boxes .os-embed-link {
     width: 250px;

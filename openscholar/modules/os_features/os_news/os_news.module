@@ -16,8 +16,8 @@ function os_news_os_app_info() {
 
   $apps['os_news'] = array(
     'path' => 'news',
-  	'nodetypes' => array(
-  	  'news',
+    'nodetypes' => array(
+      'news',
     ),
     'views tabs' => array(
       'os_news' => array('page'),
@@ -84,7 +84,23 @@ function os_news_process_node(&$vars) {
   }
   else {
     if (isset($vars['content']['field_photo']) && isset($vars['content']['body'])) {
-      $vars['content']['body'][0]['#markup'] = render($vars['content']['field_photo']) . $vars['content']['body'][0]['#markup'];
+      $photo_markup = '';
+      if (isset($vars['content']['field_photo'][0]['#item']['os_file_description'][LANGUAGE_NONE][0]['value'])) {
+        $image_style = image_style_load($vars['content']['field_photo'][0]['#image_style']);
+        $width = "auto";
+        foreach ($image_style['effects'] as $delta => $effect) {
+          if (isset($effect['data']['width'])) {
+            $width = $effect['data']['width'] . "px";
+          }
+        }
+        $photo_markup .= '<div class="photo with-caption" style="width:' . $width . '">' . render($vars['content']['field_photo']);
+        $photo_markup .= '<div class="caption">' . $vars['content']['field_photo'][0]['#item']['os_file_description'][LANGUAGE_NONE][0]['value'] . '</div>';
+        $photo_markup .= '</div>';
+      }
+      else {
+        $photo_markup .= '<div class="photo no-caption clearfix">' . render($vars['content']['field_photo']) . '</div>';
+      }
+      $vars['content']['body'][0]['#markup'] = $photo_markup . $vars['content']['body'][0]['#markup'];
       unset($vars['content']['field_photo']);
     }
   }

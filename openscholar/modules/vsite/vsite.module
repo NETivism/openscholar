@@ -2988,8 +2988,58 @@ function vsite_pathauto_alias_alter(&$alias, $context) {
     return;
   }
 
+  module_load_include('inc', 'pathauto');
+
   // Prefix alias with purl.
   $alias = vsite_get_entity_alias($entity_type, $entity, $alias);
+
+  // The alias is in the form <purl>/<path>.
+  list($purl, $path) = explode('/', $alias, 2);
+  if (!_vsite_alias_exists($purl, $path, $context['source'])) {
+    return;
+  }
+
+  $maxlength = min(variable_get('pathauto_max_length', 100), _pathauto_get_schema_alias_maxlength());
+  $separator = variable_get('pathauto_separator', '-');
+  $original_path = $path;
+
+  $i = 0;
+  do {
+    // Append an incrementing numeric suffix until we find a unique alias.
+    $unique_suffix = $separator . $i;
+    $path = truncate_utf8($original_path, $maxlength - drupal_strlen($unique_suffix, TRUE)) . $unique_suffix;
+    $i++;
+  }
+  while (_vsite_alias_exists($purl, $path, $context['source']));
+
+  // Rebuild the alias if needed.
+  $alias = $purl . '/' . $path;
+}
+
+/**
+ * Helper function; Checks if a given alias is already used.
+ *
+ * @param $purl
+ *  The purl of the VSite, for example "john".
+ * @param $path
+ *  The path fo the page.
+ * @param $source
+ *  The source of the new page, e.g. node/%nid
+ *
+ * @return bool
+ *  Returns TRUE if the alias is taken. FALSE otherwise.
+ */
+function _vsite_alias_exists($purl, $path, $source) {
+  // First check if the path is a system path.
+  $item = menu_get_item($path);
+  if ($item['href'] == $path) {
+    return TRUE;
+  }
+
+  $alias = $purl . '/' . $path;
+
+  // Also ensure that the alias does not exist yet.
+  return _pathauto_alias_exists($alias, $source);
 }
 
 /**

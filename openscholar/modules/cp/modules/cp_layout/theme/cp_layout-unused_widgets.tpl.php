@@ -29,5 +29,5 @@
       <?php echo $children; ?>
     </div>
   </div>
-  <div id="websiteLabelTab"></div>
+  <div id="websiteLabelTab">Website Layout</div>
 </div>

@@ -9,12 +9,26 @@ class os_sv_list extends os_boxes_default {
   public $embed_as = array(
     'iframe',
   );
-  
+
+  protected function set_cache_id($bundle = NULL, $page = NULL) {
+    // Discard 'all' bundle selection.
+    if ($bundle == 'node:all') {
+      $bundle = NULL;
+    }
+
+    return parent::set_cache_id($bundle, $page);
+  }
+
   public function __construct() {
     parent::__construct();
     $this->entity_type = $this->bundle = NULL;
   }
-  
+
+  public function set_cache($cache, $box = NULL) {
+    $this->_plugins_invoke('set_cache_time', $this->cache_time);
+    parent::set_cache($cache, $box);
+  }
+
   /**
    * Implementation of boxes_content::options_defaults().
    */
@@ -218,84 +232,111 @@ class os_sv_list extends os_boxes_default {
     if (module_exists('vsite') && !vsite_get_vsite()) {
       return;
     }
-    
-    $bundle = ($this->options['content_type'] != 'all') ? $this->options['content_type'] : NULL;
-    $this->_set_plugins($this->entity_type, $bundle);
-    
+
+    $cid = ($this->options['content_type'] != 'all') ? 'node:' . $this->options['content_type'] : NULL;
+
     $block = parent::render();
-    $this->options += $this->options_defaults();
-    $page_num = (isset($_GET['page'])) ? $_GET['page'] : 0;
-    $page = 0;
-    $ids = $this->get_ids($page_num, $page);
-   
-    // add the pager.
-    if ($this->options['pager'] && $ids) {
-      $parameters = array(
-        'sv_list_box_delta' => $this->delta,
-        'pager_id' => $this->pager_element,
-        'destination' => $_GET['q'],
-      );
-      $use_pager = 'views_mini_pager';
-      $pager = theme($use_pager , array(
-        'parameters' => $parameters,
-        'element' => $this->pager_element,
-        'quantity' => $this->options['number_of_items'],
-      ));
+    $page_num = pager_find_page(PagerDefault::$maxElement);
+
+    $this->set_cache_id($cid, $page_num);
+    if (($block['content'] = $this->get_cache()) === FALSE) {
+      $block['content'] = NULL;
+      $assets = array();
+      $this->options += $this->options_defaults();
       
+      $page = 0;
+      $ids = $this->get_ids($page_num, $page);
+      
+      $this->_set_plugins($this->entity_type, $cid);
+
+      // Add the pager.
+      if ($this->options['pager'] && $ids) {
+        $parameters = array(
+          'sv_list_box_delta' => $this->delta,
+          'pager_id' => $this->pager_element,
+          'destination' => $_GET['q'],
+        );
+
+        $use_pager = 'views_mini_pager';
+
+        $pager = theme($use_pager , array(
+          'parameters' => $parameters,
+          'element' => $this->pager_element,
+          'quantity' => $this->options['number_of_items'],
+        ));
+
+        // If the pager is active, the more link needs its vars to know whether
+        // or not to display.
+        global $pager_page_array, $pager_total;
+        $pager_current = $pager_page_array[$parameters['pager_id']] + 1;
+        $pager_max = $pager_total[$parameters['pager_id']];
+      }
+      else {
+        $pager = '';
+      }
+
       drupal_add_library('system', 'drupal.ajax');
-      drupal_add_js(drupal_get_path('module', 'os_sv_list'). '/os_sv_list_display.js');      
+      drupal_add_js(drupal_get_path('module', 'os_sv_list') . '/os_sv_list_display.js');
+
+      // Truncate items and prepare the more link.
+      $more = '';
+      if (count($ids) > $this->options['number_of_items'] || ($this->options['pager'] && $ids && $pager_current < $pager_max)) {
+        $ids = array_slice($ids, 0, $this->options['number_of_items']);
+        $more = ($this->options['more']) ? l($this->options['more_text'], $this->options['more_link'], array('attributes' => array('class' => array('more-link')))) : '';
+      }
+
+      // Give plugins a chance to alter the entities after loading but before
+      // rendering. see events.
+      $entities = entity_load($this->entity_type, $ids);
+      $entities = array_map(function ($e) { $e->sv_list = TRUE; return $e; }, $entities);
+      $this->_plugins_invoke('entities_alter', $entities);
       
-      //if the pager is active, the more link needs its vars to know whether or not to display.
-      global $pager_page_array, $pager_total;
-      $pager_current = $pager_page_array[$parameters['pager_id']] + 1;
-      $pager_max = $pager_total[$parameters['pager_id']];
-    }
-    else {
-      $pager = '';
-    }
+      // If we have entities render them out, otherwise cache (null) as the content.
+      if (!empty($entities)) {
         
-    // Truncate items and prepare the more link.
-    $more = '';
-    if (count($ids) > $this->options['number_of_items'] || ($this->options['pager'] && $ids && $pager_current < $pager_max)) {
-      $ids = array_slice($ids, 0, $this->options['number_of_items']);
-      $more = ($this->options['more']) ? l($this->options['more_text'], $this->options['more_link'], array('attributes' => array('class' => array('more-link')))) : '';
+        if ($this->options['display'] == 'title') {
+          $render = $this->display_title($entities);
+        }
+        else {
+          // Let a plugin do the rendering. If they don't, use the default.
+          $render = $this->_plugins_invoke('render', $entities);
+          $render = ($render) ? $render : entity_view($this->entity_type, $entities, $this->options['display']);
+        }
+  
+        $layout_func = 'layout_' . $this->options['layout'];
+        if ($this->options['layout'] != 'List' && method_exists($this, $layout_func)) {
+          $this->$layout_func($render);
+        }
+  
+        // Now render to html.
+        $content = drupal_render($render);
+        $delta = $this->delta;
+        $class = strtolower(implode(' ', array(
+          'os-sv-list',
+          $this->plugin_key,
+          'sv-list-' . $this->options['content_type'],
+          'sv-list-view-' . $this->options['display'],
+          'sv-list-layout-' . $this->options['layout'],
+          'sv-grid-' . $this->options['grid_columns'],
+        )));
+  
+        $assets = array(
+          'library' => array(
+            array(
+              'system', 'drupal.ajax',
+            ),
+          ),
+          'js' => array(
+            drupal_get_path('module', 'os_sv_list') . '/os_sv_list_display.js',
+          ),
+        );
+
+        $block['assets'] = $assets;
+        $block['content'] = "<div id='box-${delta}-page' data-page='${page_num}' data-delta='${delta}' class='${class}'>${content}</div>${pager}{$more}";
+      }
+      $this->set_cache($block['content'], $assets);
     }
-    
-    //give plguins a chance to alter the entities after loading but before rendering.  see events.
-    $entities = entity_load($this->entity_type, $ids);
-    $entities = array_map(function ($e) { $e->sv_list = TRUE; return $e; }, $entities);
-    $this->_plugins_invoke('entities_alter', $entities);
-    if (empty($entities)) {
-      return $block;
-    }
-    
-    if ($this->options['display'] == 'title') {
-      $render = $this->display_title($entities); 
-    } else {
-      //let a plugin do the rendering.  if they don't, use the default.
-      $render = $this->_plugins_invoke('render', $entities);
-      $render = ($render) ? $render : entity_view($this->entity_type, $entities, $this->options['display']);
-    }
-    
-    
-    $layout_func = 'layout_' . $this->options['layout'];    
-    if ($this->options['layout'] != 'List' && method_exists($this, $layout_func)) {
-      $this->$layout_func($render);
-    }
-    
-    //now render to html.
-    $content = drupal_render($render);   
-    $delta = $this->delta;   
-    $class = strtolower(implode(' ', array(
-      'os-sv-list',
-      $this->plugin_key, 
-      'sv-list-'.$this->options['content_type'], 
-      'sv-list-view-'.$this->options['display'], 
-      'sv-list-layout-' . $this->options['layout'],
-      'sv-grid-' . $this->options['grid_columns'],
-    )));
-    
-    $block['content'] = "<div id='box-${delta}-page' data-page='${page_num}' data-delta='${delta}' class='${class}'>${content}</div>${pager}{$more}";
+
     return $block;
   }
   
@@ -308,9 +349,7 @@ class os_sv_list extends os_boxes_default {
       $query->propertyCondition('type', $this->options['content_type']);
       //any special hook here?
     }
-    
-    
-    
+
     //pager
     if ($this->options['pager'] && is_int($page)) {
       $query->pager($this->options['number_of_items']);
@@ -327,11 +366,7 @@ class os_sv_list extends os_boxes_default {
       $this->_plugins_invoke($sort, $query);
     }
     $this->_plugins_invoke('sort_alter', $query);
-    
-    //person, !image
-    //event exception.  dletas.
 
-    
     //execute
     $result = $query->execute();
     return (isset($result[$this->entity_type])) ? array_keys($result[$this->entity_type]) : array();
@@ -340,11 +375,9 @@ class os_sv_list extends os_boxes_default {
   public function query() {
     $efq = new EntityFieldQuery();
     $efq->entityCondition('entity_type', $this->entity_type);
-    
     if (module_exists('vsite') && $space = spaces_get_space()) {
       $efq->fieldCondition(OG_AUDIENCE_FIELD, 'target_id', $space->id);
     }
-    
     return $efq;
   }
   
@@ -484,7 +517,7 @@ class os_sv_list extends os_boxes_default {
     return $return;
   }
 
-  function sort_random(&$efq) {
+  function sort_random(EntityFieldQuery &$efq) {
     $efq->addTag('random');
   }
   

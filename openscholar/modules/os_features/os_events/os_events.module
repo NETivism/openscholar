@@ -767,8 +767,10 @@ function os_events_form_registration_entity_settings_form_alter(&$form, $form_st
 
   // Default value of the From field should be the author of the event's e-mail
   // in case it hasn't been changed yet (if it hasn't been changed yet, the email
-  // will be set by default as the site owner email address).
-  if ($form['settings']['from_address']['#default_value'] == variable_get('site_mail')) {
+  // will be set by default to be as defined in the field instance).
+  $info = field_info_instance('node', 'field_event_registration', 'event');
+  $default_email = $info['settings']['default_registration_settings']['settings']['from_address'];
+  if ($form['settings']['from_address']['#default_value'] == $default_email) {
     $from_default_value = $wrapper->author->mail->value();
   }
   else {
@@ -1084,7 +1086,19 @@ function os_events_entity_insert($entity, $type) {
     'entity_id' => $node->nid,
   );
 
-  drupal_mail($module, $key, $wrapper->anon_mail->value(), $language, $params);
+  // Get the event's author to set the "from" email address. If it hasn't been
+  // set yet in the registration settings, use the event's author email address.
+  $registration_settings = registration_entity_settings('node', $node->nid);
+  $info = field_info_instance('node', 'field_event_registration', 'event');
+  $default_email = $info['settings']['default_registration_settings']['settings']['from_address'];
+  if ($registration_settings['settings']['from_address'] == $default_email) {
+    $event_author = user_load($node->uid);
+    $from = $event_author->mail;
+  }
+  else {
+    $from = $registration_settings['settings']['from_address'];
+  }
+  drupal_mail($module, $key, $wrapper->anon_mail->value(), $language, $params, $from);
 }
 
 /**
@@ -1105,11 +1119,8 @@ function os_events_mail_alter(&$message) {
     return;
   }
 
-  // Get event default email address.
-  $wrapper = entity_metadata_wrapper($message['params']['context']['entity_type'], $message['params']['context']['entity_id']);
-
-  // Set default email as the message's sender.
-  $message['headers']['From'] = $wrapper->author->mail->value();
+  // Set the sender and return-path headers.
+  $message['headers']['Sender'] = $message['headers']['Return-Path'] = $message['headers']['From'];
 }
 
 /**

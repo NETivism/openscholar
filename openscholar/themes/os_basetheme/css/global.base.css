@@ -456,6 +456,10 @@ ol {
   padding: 0;
 }
 
+.field-name-body ol {
+margin: 0 0 1.5em 21px;
+}
+
 .item-list ul,
 .item-list ol {
   margin: 0;
@@ -655,23 +659,55 @@ ul ul ul ul {
 }
 
 .ical {
-  background:url('../images/ical_icon.gif') no-repeat !important;
   padding:3px 0 3px 25px !important;
   border-bottom:none !important;
- 
+  position: relative;
 }
 
 .webcal {
-  background:url('../images/ical_icon.gif') no-repeat !important;
   padding:3px 0 3px 25px !important;
   border-bottom:none !important;
+  position: relative;
+}
 
+.webcal:before,
+.ical:before {
+  background: url('../images/scholarbase-sprite.png') no-repeat -48px -727px;
+  width: 21px;
+  height: 21px;
+  position: absolute;
+  left: 0;
+  content: '';
+}
+
+.rss {
+  padding:3px 0 3px 25px !important;
+  border-bottom:none !important;
+  position: relative;
+}
+
+.rss:before {
+  background: url('../images/scholarbase-sprite.png') no-repeat 0px -727px;
+  width: 21px;
+  height: 21px;
+  position: absolute;
+  left: 0;
+  content: '';
 }
 
 .subscribe {
-  background:url('../images/calendar_icon.gif') no-repeat !important;
   padding:3px 0 3px 25px !important;
   border-bottom:none !important;
+  position: relative;
+}
+
+.subscribe:before {
+  background: url('../images/scholarbase-sprite.png') no-repeat -24px -727px;
+  width: 21px;
+  height: 21px;
+  position: absolute;
+  left: 0;
+  content: '';
 }
 
 .register {
@@ -686,13 +722,6 @@ div.register-link-teaser {
 div.register-link-teaser .register {
   font-weight: normal;
   border-bottom:none !important;
-}
-
-.rss {
-background:url('../images/rss_icon.gif') no-repeat !important;
-padding:3px 0 3px 25px !important;
- border-bottom:none !important;
-
 }
 
 .os_events_export_links .first {
@@ -715,6 +744,15 @@ padding:3px 0 3px 25px !important;
   padding-top: 30px;
 }
 
+.register-link-teaser a {
+font-style: italic;
+}
+
+.register-event-full {
+display: block;
+font-style: italic;
+color: #6D6D6D;
+}
 
 .node-event.article .field-name-field-default-email.field-label-above {
 	float:left;margin-top:10px;
@@ -992,4 +1030,83 @@ td img {
 
 .entity-registration .field-label {
   padding-right: 5px;
+}
+
+/** Message icon overrides */
+div.status,
+div.error {
+  background-image: none;
+}
+
+div.messages:before {
+  position: absolute;
+  content: '';
+  background-image: url('../images/scholarbase-sprite.png');
+  height: 24px;
+  width: 24px;
+  top: 8px;
+  left: 8px;
+}
+
+div.status:before {
+  background-position: -38px -231px;
+}
+
+div.error:before {
+  background-position: -72px -231px;
+}
+
+/** Toolbar overrides */
+
+#toolbar-home a span {
+  background: url('../images/scholarbase-sprite.png') no-repeat 0 -845px;
+}
+
+#toolbar div.toolbar-menu a.toggle {
+  background: url('../images/scholarbase-sprite.png') 0 -820px no-repeat;
+}
+
+#toolbar a.toggle {
+  background-image: url('../images/scholarbase-sprite.png');
+  background-position: 0px -859px;
+}
+
+#toolbar a.toggle-active {
+  background-position: -27px -859px;
+}
+
+#toolbar div.toolbar-menu ul li a[data-drawer] {
+  background-image: none;
+  position: relative;
+}
+
+#toolbar div.toolbar-menu ul li a[data-drawer]:after {
+  content: '';
+  background-image: url('../images/scholarbase-sprite.png');
+  background-position: -16px -850px;
+  position: absolute;
+  width: 10px;
+  height: 5px;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  right: 10px;
+}
+
+#toolbar div.toolbar-menu ul#toolbar-help li a {
+  background-image: none;
+  position: relative;
+}
+
+#toolbar div.toolbar-menu ul#toolbar-help li a:before {
+  content: '';
+  position: absolute;
+  background-image: url('../images/scholarbase-sprite.png');
+  background-position: 0 -885px;
+  height: 15px;
+  width: 15px;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 10px;
 }

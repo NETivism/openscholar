@@ -570,33 +570,14 @@ div.tweets-pulled-listing div.tweet-divider {
 	text-transform: uppercase;
 }
 
-.section-nav .collapsed > a {
-	background: url('../../os_basetheme/images/arrow-right.png') no-repeat left center;
-	
-}
-
-.section-nav .expanded > a {
-	background: url('../../os_basetheme/images/arrow-down.png') no-repeat left center;
-	
-}
 .section-nav .expanded.menu-depth-2 > a {
 	background-color: #3a72ab;
 	color: #fff;
 }
 
-.section-nav .expanded.menu-depth-2 .menu-depth-3 > a,
-.section-nav .expanded.menu-depth-2 .menu-depth-4 > a,
-.section-nav .expanded.menu-depth-2 .menu-depth-5 > a {
-	background-color: #f3f3f1;
-	padding-left: 25px;
-}
-
-.section-nav .expanded.menu-depth-2 .menu-depth-4 > a {
-	padding-left: 35px;
-}
-
-.section-nav .expanded.menu-depth-2 .menu-depth-5 > a {
-	padding-left: 45px;
+.section-nav .menu-depth-1 .expanded > a:before,
+.section-nav .menu-depth-1 .collapsed > a:before {
+  top: 9px;
 }
 
 

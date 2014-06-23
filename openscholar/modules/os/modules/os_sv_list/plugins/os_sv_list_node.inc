@@ -8,16 +8,6 @@ class os_sv_list_box extends os_sv_list {
   }
   
   /**
-   * Implementation of boxes_content::options_defaults().
-   */
-  /*
-  public function options_defaults() {
-    $options = parent::options_defaults();
-    return $options;
-  }
-  */
-  
-  /**
    * Implements boxes_content::options_form().
    */
   public function options_form(&$form_state) {
@@ -54,16 +44,16 @@ class os_sv_list_box extends os_sv_list {
   /**
    * sorting functions.
    */
-  function sort_newest(&$efq) {
+  function sort_newest(EntityFieldQuery &$efq) {
     //could thiese be made generic by using entity_get_info to figure out $created and $title per type?
     $efq->propertyOrderBy('created', 'DESC');
   }
 
-  function sort_oldest(&$efq) {
+  function sort_oldest(EntityFieldQuery &$efq) {
     $efq->propertyOrderBy('created', 'ASC');
   }
 
-  function sort_alpha(&$efq) {
+  function sort_alpha(EntityFieldQuery &$efq) {
     $efq->propertyOrderBy('title', 'ASC');
   }
 }

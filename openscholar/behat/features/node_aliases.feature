@@ -96,3 +96,14 @@ Feature:
      When I press "Save"
      Then I should see "The alias is already in use."
 
+  @api @first
+  Scenario: Verify the when a user create a page with a title that is a system
+            path (for example a page with a title of "contact") the alias
+            produced is given a suffix, for example creating the page titled
+            "contact" in "john" will result with an alias of "john/contact-0"
+    Given I am logging in as "john"
+      And I visit "john/node/add/page"
+      And I fill in "Title" with "contact"
+      And I check the box "Generate automatic URL alias"
+     When I press "Save"
+     Then I verify the alias of node "contact" is "john/contact-0"

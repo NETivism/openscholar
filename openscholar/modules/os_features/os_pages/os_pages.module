@@ -498,7 +498,6 @@ function os_pages_form_page_node_form_alter(&$form, &$form_state) {
   );
 }
 
-
 /**
  * Submit callback; syncs body summary value with field_meta_summary.
  */
@@ -935,6 +934,7 @@ function os_pages_cancel_form($form, &$form_state) {
  */
 function os_pages_alias_preview_ajax() {
   $path = _os_pages_make_alias($_GET['gid'], $_GET['type'], $_GET['title'], $_GET['purl']);
+
   if ($path) {
     $json = array('status' => TRUE, 'data' => $path, 'prefix' => $_GET['prefix']);
   }

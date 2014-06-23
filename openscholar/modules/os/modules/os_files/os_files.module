@@ -2279,3 +2279,46 @@ function os_files_get_bundles() {
 
   return $bundles;
 }
+
+/**
+ * Tests a path to determine whether it should be served from the static domain.
+ *
+ * @param $path - The path to test
+ */
+function _os_files_use_static_domain($path) {
+  if (strpos($path, 'js/js_') !== FALSE) {
+    // aggregated js file.
+    return TRUE;
+  }
+  elseif (in_array(pathinfo($path, PATHINFO_EXTENSION), array('js', 'ico'))) {
+    // keep adding things here as they come up
+    return TRUE;
+  }
+  elseif (strpos($path, 'styles/') !== FALSE) {
+    return TRUE;
+  }
+  else {
+    return FALSE;
+  }
+}
+
+/**
+ * Serves js and images from a static domain.
+ */
+function os_files_file_url_alter(&$uri) {
+  // Skip files using a schema.
+  // They'll be handled in the public stream wrapper.
+  // Also, make sure the variable is set.
+  if (!file_uri_scheme($uri) && _os_files_use_static_domain($uri) && $domain = variable_get('os_files_static_domain')) {
+    $uri = $domain . '/' . $uri;
+    $link = array(
+      '#type' => 'html_tag',
+      '#tag' => 'link',
+      '#attributes' => array(
+        'rel' => 'dns-prefetch',
+        'href' => $domain
+      )
+    );
+    drupal_add_html_head($link, 'dns-prefetch');
+  }
+}

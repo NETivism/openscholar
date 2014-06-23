@@ -13,6 +13,34 @@ function os_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'advagg_js_compressor';
+  $strongarm->value = '1';
+  $export['advagg_js_compressor'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'advagg_js_compress_packer';
+  $strongarm->value = 0;
+  $export['advagg_js_compress_packer'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'advagg_js_inline_compressor';
+  $strongarm->value = '1';
+  $export['advagg_js_inline_compressor'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'advagg_js_inline_compress_if_not_cacheable';
+  $strongarm->value = 1;
+  $export['advagg_js_inline_compress_if_not_cacheable'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'configurable_timezones';
   $strongarm->value = '0';
   $export['configurable_timezones'] = $strongarm;
@@ -83,6 +111,27 @@ function os_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'imageapi_toolkit';
+  $strongarm->value = 'imageapi_optimize';
+  $export['image_toolkit'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'imageapi_optimize_service';
+  $strongarm->value = 'smushit';
+  $export['imageapi_optimize_service'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'imageapi_optimize_toolkit';
+  $strongarm->value = 'gd';
+  $export['imageapi_optimize_toolkit'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'pathauto_node_pattern';
   $strongarm->value = '';
   $export['pathauto_node_pattern'] = $strongarm;
@@ -113,7 +162,8 @@ function os_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'securepages_pages';
   $strongarm->value = 'user
-user/login';
+user/login
+pinserver/auth';
   $export['securepages_pages'] = $strongarm;
 
   $strongarm = new stdClass();

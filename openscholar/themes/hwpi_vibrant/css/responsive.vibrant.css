@@ -36,19 +36,24 @@
   -webkit-border-radius: 0 0 0 0;
   border-radius: 0 0 0 0;
 }
+
 .link-count-mobi-main a {
-    background: url("../images/icon_menu.png") no-repeat scroll 15px center #FFFFFF !important;
+  background-position: 0 -521px;
 }
+
 .link-count-mobi-util a {
-    background: url("../images/icon_plus.png") no-repeat scroll center center #F7F7F7 !important;
+  background-position: -52px -527px;
 }
+
 .link-count-mobi-search a {
-    background: url("../images/icon_search.png") no-repeat scroll center center #4077AE !important;
+  background-color: #4077AE;
 }
+
 .not-front .hg-container {
-    padding-top: 65px !important;
-    width:100%;
+  padding-top: 65px !important;
+  width:100%;
 }
+
 /* Dropdown menu */
 
 #menu-bar #block-os-primary-menu a {

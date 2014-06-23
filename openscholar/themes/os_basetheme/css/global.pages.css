@@ -315,18 +315,18 @@ body#widget {display: inline-block;}
 
 
 #powered-by a {
-    background: url("../images/poweredby.png") no-repeat scroll 0 0 transparent;
-    border: medium none !important;
-    display: block;
-    height: 26px;
-    padding: 0 !important;
-    text-decoration: none !important;
-    text-indent: -999em;
-    width: 85px;
-    margin-right:8px;
-    float:right;
-    display:inline;
-  }
+  background: url("../images/scholarbase-sprite.png") no-repeat scroll -14px -521px transparent;
+  border: medium none !important;
+  display: block;
+  height: 26px;
+  padding: 0 !important;
+  text-decoration: none !important;
+  text-indent: -999em;
+  width: 85px;
+  margin-right:8px;
+  float:right;
+  display:inline;
+}
 
 
 
@@ -516,9 +516,8 @@ ul.class_material_field_class {
     }
 
 ul.class_material_field_class a.class_material_field_class_anchor {
-    background: url("../images/scholarbase-sprite.png") 0 -492px no-repeat;
-    padding-left: 15px;
-
+  background: url("../images/scholarbase-sprite.png") 0 -489px no-repeat;
+  padding-left: 15px;
 }
 
 /* BLOG COMMENT ICON */
@@ -558,21 +557,25 @@ ul.class_material_field_class a.class_material_field_class_anchor {
     position: relative;
 }
 
-
 .video-indicator {
-	background: url("../images/movie_file_icon.png") no-repeat;
+	background-image: url("../images/scholarbase-sprite.png");
+  background-position: -44px -85px;
  	bottom: 10px;
   display: block;
-  height: 13%;
-  left: 5px;
+  left: 10px;
   height: 48px;
   width: 48px;
 	position: relative;
   margin-top: -48px;
 }
 
-.oembed:hover>a>.video-indicator {
-  background: url("../images/movie_file_icon_highlight.png") no-repeat;
+.media-gallery-item:hover .video-indicator {
+  background-position: -44px -133px;
+}
+
+.draggable-wrapper .draggable-handle {
+  background-image: url("../images/scholarbase-sprite.png");
+  background-position: 0 -45px;
 }
 
 /* VIDEO ATTACHED TO A NODE  */
@@ -743,17 +746,17 @@ div.ctools-modal-content {
 div.ctools-modal-content .modal-header {
   background: #EFEFEF;
   border-bottom:2px solid #C4C2C2;
- height:24px;
- padding:10px;
-  }
+  height:24px;
+  padding:10px;
+}
 
 div.ctools-modal-content .modal-header a {
-float:right;
-color: transparent;
-background: url('../images/icon-close-window.png') no-repeat;
-width:30px;
-height:30px;
-  }
+  float:right;
+  color: transparent;
+  background: url('../images/scholarbase-sprite.png') no-repeat 0 -772px;
+  width:30px;
+  height:30px;
+}
 
 div.ctools-modal-content .modal-content {
   padding: 12px 12px 0 12px;
@@ -811,9 +814,11 @@ div.ctools-modal-content .modal-content .modal-throbber-wrapper img {
 }
 
 /** OVERLAY MODAL OVERRIDES **/
-	
+
+/* The overlay should never be open with os_basetheme. This is here in case we miss
+ * a path that needs the cp_theme activated */
 #overlay-close, #overlay-close:hover {
-    background: url('../images/icon-close-window.png') no-repeat;
+  background: url('../images/scholarbase-sprite.png.png') no-repeat 0 -772px;
 	width:30px;
 	height:30px;
 	position: relative;
@@ -893,11 +898,11 @@ width: calc(100% - 4em) !important;
 
 
 .page-roadmap .ui-icon-closethick {
-background: url('../images/icon-close-window.png') no-repeat;
-width: 30px;
-height: 30px;
-position: relative;
-margin: -5px -20px;
+  background: url('../images/scholarbase-sprite.png.png') no-repeat 0 -772px;
+  width: 30px;
+  height: 30px;
+  position: relative;
+  margin: -5px -20px;
 }
 
 
@@ -1158,26 +1163,32 @@ border:1px solid #CCC;
 }
 
 
-.jcarousel-container a.jcarousel-next,
-.jcarousel-container a.jcarousel-next:hover {
- 			background-image: url('../images/jcarou-next-horizontal.png'); 
- 			background-color: transparent;
- 			right: -14px; 
- 			top: 46px;
- 			width:22px;
- 			height:22px;
- 			background-position: -3px -3px;
- 			}
+.jcarousel-container a.jcarousel-next {
+  background-image: url('../images/scholarbase-sprite.png');
+  background-color: transparent;
+  background-position: -30px 0;
+  right: -15px;
+  top: 46px;
+  width: 22px;
+  height: 22px;
+}
 
-.jcarousel-container a.jcarousel-prev,
+.jcarousel-container a.jcarousel-next:hover {
+  background-position: -30px 0;
+}
+
+.jcarousel-container a.jcarousel-prev {
+  background-image: url('../images/scholarbase-sprite.png');
+  background-position: -54px 0;
+  left: -15px;
+  top: 46px;
+  width: 22px;
+  height: 22px;
+}
+
 .jcarousel-container a.jcarousel-prev:hover {
-			background-image: url('../images/jcarou-prev-horizontal.png');
-			left: -15px; 
-			top: 46px;
-			width:22px;
-			height:22px;
-			background-position: -1px -3px;
-	       }
+  background-position: -54px 0;
+}
 	       
 	
 /* Recent Images Widget */
@@ -1221,26 +1232,6 @@ img.media-element.file-default[style*="float:"][style*="right;"] {
 	padding-right:0;
 	}	
 	
-/**
- * "News" node-type styles.
- *
- * @todo These rules SHOULD be stored in the os_news module. 
- *
- * The original CSS file intermittently failed to load:
- * @see /profiles/openscholar/modules/os_features/os_news/os_news.css
- */
-
-
-.node-news .field-name-field-photo {
-  float: left;
-  margin: 0 1.5em .5em 0;
-}
-
-.page-node.node-type-news .field-name-body .field-name-field-photo {
-  float: right;
-  margin-left: 1em;
-}
-
 
 .block-boxes-os_sv_list_box .os_sv_list_box.sv-list-link.sv-list-view-links h1 a {
 	font-weight:normal;

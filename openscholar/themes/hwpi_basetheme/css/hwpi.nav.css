@@ -30,29 +30,48 @@ position: relative;
 }
 
 #menu-bar ul.nice-menu .menuparent a {
-    background: url(../images/menu_down_arrowOff.gif) right center no-repeat;
-    padding-right: 15px;
+  padding-right: 15px;
+  position: relative;
 }
 
+#menu-bar ul.nice-menu .menuparent > a:before {
+  position: absolute;
+  background-image: url('../images/hwpi_basesprite.png');
+  background-position: -12px -566px;  /* Blue Arrow */
+  background-color: transparent;
+  margin: auto;
+  content: '';
+  width: 10px;
+  height: 8px;
+  right: 2px;
+  top: 0;
+  bottom: 0;
+}
 
+/* Targets all menuparents, top level or descendents of top */
 #menu-bar ul.nice-menu .menuparent.over > a,
 #menu-bar ul.nice-menu .menuparent a:hover,
 #menu-bar ul.nice-menu .menuparent a.active {
-    background: url(../images/menu_down_arrowOn.gif) right center no-repeat #1E2540;
-     color:#FFF;
-    padding-right: 15px;
+  background-color: #1E2540;
+  color:#FFF;
 }
 
+#menu-bar ul.nice-menu .menuparent.over > a:before,
+#menu-bar ul.nice-menu .menuparent a:hover:before,
+#menu-bar ul.nice-menu .menuparent a.active:before {
+  background-position: 0 -566px; /* White Arrow */
+}
+
+/* Targets parents below top level */
 #menu-bar ul.nice-menu ul .menuparent.over > a,
 #menu-bar ul.nice-menu ul .menuparent a:hover,
 #menu-bar ul.nice-menu ul .menuparent a.active {
-    background: none;
-     color:inherit;
+  background: none;
+  color:inherit;
 }
 
 #menu-bar ul.nice-menu li {
-    margin-right: 20px;
-  
+  margin-right: 20px;
 }
 
 #menu-bar ul.nice-menu li.last {

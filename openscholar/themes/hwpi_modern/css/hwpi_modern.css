@@ -14,12 +14,25 @@ body {
 /* Elements */
 
 #columns a.node-readmore {
-    border-bottom: none;
-    font-size:12px;
-    font-weight:bold;
-    background: url("../../hwpi_basetheme/images/readmore_arrow.gif") no-repeat scroll right center transparent;
-    float: none;
-    padding-right: 11px;
+  border-bottom: none;
+  font-size:12px;
+  font-weight:bold;
+  float: none;
+  padding-right: 11px;
+  position: relative;
+}
+
+#columns a.node-readmore:after {
+  position: absolute;
+  content: '';
+  background-image: url("../../hwpi_basetheme/images/hwpi_basesprite.png");
+  background-position: 0 -575px;
+  height: 9px;
+  width: 6px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  right: 0px;
 }
 
 
@@ -64,15 +77,14 @@ ul.nice-menu ul {
   color: #FFF;
 }
 
-#menu-bar ul.nice-menu .menuparent a {
-    background: url(../../hwpi_basetheme/images/menu_down_arrowOn.gif) right center no-repeat;
+#menu-bar ul.nice-menu .menuparent a:before {
+  background-position: 0 -566px; /* White Arrow */
 }
-
 
 #menu-bar ul.nice-menu .menuparent.over > a,
 #menu-bar ul.nice-menu .menuparent a:hover,
 #menu-bar ul.nice-menu .menuparent a.active {
-    background: url(../../hwpi_basetheme/images/menu_down_arrowOn.gif) right center no-repeat #7B272B;
+  background-color: #7B272B;
 }
 
 #menu-bar ul.nice-menu .menuparent ul li a,

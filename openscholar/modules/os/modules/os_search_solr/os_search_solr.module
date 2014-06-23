@@ -127,7 +127,7 @@ function os_search_solr_apachesolr_query_alter(DrupalSolrQueryInterface $query) 
     }
     
     // There may be private features, this user is a member and should get access to private features in search.
-    if ($query->hasFilter('bs_private', 1, TRUE) && (user_access('administer group') || og_is_member('node', $vsite->nid))) {
+    if ($query->hasFilter('bs_private', 1, TRUE) && (user_access('administer group') || og_is_member('node',  $group_wrapper->getIdentifier()))) {
       $query->removeFilter('bs_private');
     }
   }

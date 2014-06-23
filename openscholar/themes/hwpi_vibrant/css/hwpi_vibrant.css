@@ -280,11 +280,10 @@ div.contextual-links-wrapper a,
   border-radius: 3px 3px 0 0;
 }
 
-#menu-bar ul.nice-menu .menuparent a span,
-#menu-bar ul.nice-menu .menuparent a:hover span,
-#menu-bar ul.nice-menu .menuparent a.active span {
-  background: url("../images/menu-arrow.png") no-repeat scroll right center transparent;
-  padding-right: 20px;
+#menu-bar ul.nice-menu .menuparent a:before,
+#menu-bar ul.nice-menu .menuparent a:hover:before,
+#menu-bar ul.nice-menu .menuparent a.active:before {
+  background-position: -46px -566px;
 }
 
 #menu-bar ul.nice-menu .menuparent ul a span {
@@ -694,11 +693,11 @@ table td.mini {
 }
 
 .view .date-nav-wrapper .date-next a {
-    background: url("../images/cal_rightarrow.gif") no-repeat scroll 0 1px transparent;
+    background-position: -16px -590px;
 }
 
 .view .date-nav-wrapper .date-prev a {
-    background: url("../images/cal_leftarrow.gif") no-repeat scroll 0 0 transparent;
+    background-position: 0px -590px;
 }
 
 .view .date-nav-wrapper .date-prev a, .view .date-nav-wrapper .date-next a {
@@ -940,36 +939,34 @@ ul.links li.link-count-node-readmore a {
  color: #57ACFF;
 }
 
-
 #footer ul.menu a {
   text-transform: none;
   font-size: 16px;
 }
 
 #powered-by a {
-    background-position: 0 -25px;
-  
+  background-position-y: -546px;
 }
 
 #footer .footer-login {
-    background: none;
-    border-left: none;
-    color: #57ACFF;
-    text-shadow: none;
-    padding: 0;
-    font-size: 13px;
+  background: none;
+  border-left: none;
+  color: #57ACFF;
+  text-shadow: none;
+  padding: 0;
+  font-size: 13px;
 }
 
 /* SLIDESHOW */
 #layout_16_9_side .slide {
   background: #ac253a;
-background: -moz-linear-gradient(top, #ac253a 0%, #880f1c 100%);
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ac253a), color-stop(100%, #880f1c));
-background: -webkit-linear-gradient(top, #ac253a 0%, #880f1c 100%);
-background: -o-linear-gradient(top, #ac253a 0%, #880f1c 100%);
-background: -ms-linear-gradient(top, #ac253a 0%, #880f1c 100%);
-background: linear-gradient(to bottom, #ac253a 0%, #880f1c 100%);
-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ac253a', endColorstr='#880f1c',GradientType=0 );
+  background: -moz-linear-gradient(top, #ac253a 0%, #880f1c 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ac253a), color-stop(100%, #880f1c));
+  background: -webkit-linear-gradient(top, #ac253a 0%, #880f1c 100%);
+  background: -o-linear-gradient(top, #ac253a 0%, #880f1c 100%);
+  background: -ms-linear-gradient(top, #ac253a 0%, #880f1c 100%);
+  background: linear-gradient(to bottom, #ac253a 0%, #880f1c 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ac253a', endColorstr='#880f1c',GradientType=0 );
 }
 
 a.rslides_nav {

@@ -316,11 +316,7 @@ function os_slideshow_theme($existing, $type, $theme, $path) {
         'nodes' => array(),
         'slides' => NULL,
         'controls' => NULL,
-        'timeout' => 4000,
-        'speed' => 700,
-        'effect' => 'fade',
         'layout' => NULL,
-        'random' => FALSE,
       ),
     ),
     'os_slideshow_slide' => array(
@@ -380,7 +376,7 @@ function os_slideshow_preprocess_os_slideshow_slide(&$vars) {
   $url = ($node->field_link) ? $node->field_link[$lang][0]['url'] : '';
   if ($url) {
     foreach (array('headline', 'description', 'image') as $elem) {
-      $vars[$elem] = l($vars[$elem], $url, array('html'=>TRUE));
+      $vars[$elem] = l($vars[$elem], $url, array('html' => TRUE));
     }
   }
 }
@@ -389,24 +385,6 @@ function os_slideshow_preprocess_os_slideshow_slide(&$vars) {
  * Implements hook_preprocess_hook().
  */
 function os_slideshow_preprocess_os_slideshow_slideshow(&$vars) {
-  // Load javascript, pass it our settings.
-  drupal_add_library('os_slideshow', 'responsiveslides');
-  drupal_add_js(drupal_get_path('module', 'os_slideshow') . '/os_slideshow_slider.js');
-  $settings = array('os_slideshow' =>   //http://www.woothemes.com/flexslider/
-    array('boxes-box-'.$vars['box_delta'] => array(
-      'pager' => TRUE,
-      'nav' => TRUE,
-      // Flex starts the timer after transition. Responsive starts it during.
-      // Adding them will let responsive look like flex did.
-      'timeout' => intval($vars['timeout'] + $vars['speed']),
-      'speed' => $vars['speed'],  
-      'random' => $vars['random'],
-    ),
-  ));
-  // slideshowSpeed, animationSpeed, randomize, animation (fade or slide
-  // (horizontal or vertical)).
-  drupal_add_js($settings, 'setting');
-  _os_slideshow_add_css();
 
   // Prepare images.
   $node_ids = $vars['nodes'];
@@ -461,6 +439,7 @@ function os_slideshow_remove_missing_nodes($nids_to_remove, $widget) {
     os_slideshow_handle_slide_update($nid, $widget, 'delete');
   }
 }
+
 /**
  * @function _os_slideshow_get_animation_direction
  *
@@ -647,9 +626,10 @@ function _os_slideshow_add_css() {
   ctools_include('themes', 'os');
   $theme = os_get_themes(os_theme_get());
   if ($file = @$theme->info['os']['os_slideshow']) {
-    drupal_add_css(drupal_get_path('theme', $theme->name)) . $file;
+    $css_file = drupal_get_path('theme', $theme->name) . $file;
   }
   else {
-    drupal_add_css(drupal_get_path('module', 'os_slideshow') . '/os_slideshow.css');
+    $css_file = drupal_get_path('module', 'os_slideshow') . '/os_slideshow.css';
   }
+  return $css_file;
 }

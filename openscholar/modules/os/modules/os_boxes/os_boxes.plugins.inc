@@ -247,6 +247,19 @@ function _os_boxes_boxes_plugins() {
     'weight' => -4
   );
 
+  $info['os_boxes_cache_test'] = array(
+    'title' => 'Just for test',
+    'description' => 'Just for test',
+    'tags' => array('Content'),
+    'handler' => array(
+      'class' => 'os_boxes_cache_test',
+      'file' => 'os_boxes_cache_test.inc',
+      'path' => $path . '/os_boxes_cache_test',
+      'parent' => 'os_boxes_default',
+    ),
+    'weight' => -4
+  );
+
   $info['os_boxes_rss'] = array(
     'title' => 'RSS feed',
     'description' => 'A feed of your posts allowing visitors to follow you.',

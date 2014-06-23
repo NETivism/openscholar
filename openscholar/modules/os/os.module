@@ -513,6 +513,11 @@ function os_module_implements_alter(&$implementations, $hook) {
     unset($implementations['os']);
     $implementations['os'] = FALSE;
   }
+  elseif ($hook == 'js_alter') {
+    // Move the os implementation of js_alter last to support the move of all js to the footer.
+    unset($implementations['os']);
+    $implementations['os'] = FALSE;
+  }
 }
 
 /**
@@ -955,6 +960,18 @@ function os_form_node_form_alter(&$form, $form_state) {
 
   // Add description to the name field in the author fieldset.
   $form['author']['name']['#description'] = t('You may change this if posting on behalf of someone else.');
+
+  // Allow access to the following form elements if the user can create or edit
+  // the current node type.
+  if (node_access('create', $form['#node']->type) || node_access('edit', $form['#node']->type)) {
+    $elements = array(
+      'options',
+    );
+
+    foreach ($elements as $element) {
+      $form[$element]['#access'] = TRUE;
+    }
+  }
 
   // Alters action buttons for existing nodes.
   if (isset($form['#node']->nid, $form['#node']->type)) {
@@ -1625,6 +1642,20 @@ function os_js_alter(&$javascript) {
     if (strpos($url, 'colorbox.js')) {
       $file = drupal_get_path('module', 'os') . '/theme/os_colorbox.js';
       $javascript[$file] = drupal_js_defaults($file);
+    }
+
+    $javascript[$url]['scope'] = 'footer';
+    if ($url === 'settings') {
+      $inline_settings = array(
+        'type' => 'inline',
+        'scope' => 'footer',
+        'data' => 'jQuery.extend(Drupal.settings, '. drupal_json_encode(drupal_array_merge_deep_array($js['data'])) . ");",
+        'group' => JS_LIBRARY,
+        'every_page' => TRUE,
+        'weight' => 0,
+      ) + drupal_js_defaults();
+      $javascript['inline_settings'] = $inline_settings;
+      unset($javascript['settings']);
     }
   }
 }

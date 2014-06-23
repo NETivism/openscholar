@@ -145,7 +145,6 @@
 #toolbar div.toolbar-menu ul li a[data-drawer].active-path,
 #toolbar div.toolbar-menu ul li.active-trail a[drawer] {
   background-color: #383838;
-  background-image: url('images/toolbar_drawer_link_arrow.png');
   background-repeat: no-repeat;
   background-position: right center;
   padding-bottom: 6px;

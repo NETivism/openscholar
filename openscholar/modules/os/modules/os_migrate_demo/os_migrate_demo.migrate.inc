@@ -775,6 +775,7 @@ class OsMigratePeopleNode extends OsMigrate {
 
   public $csvColumns = array(
     array('id', 'ID'),
+    array('prefix', 'Prefix'),
     array('title', 'First name'),
     array('middle_name', 'Middle name'),
     array('last_name', 'Last name'),
@@ -800,6 +801,7 @@ class OsMigratePeopleNode extends OsMigrate {
     parent::__construct();
 
     $this->addFieldMapping('field_middle_name_or_initial', 'middle_name');
+    $this->addFieldMapping('field_prefix', 'prefix');
     $this->addFieldMapping('field_last_name', 'last_name');
     $this->addFieldMapping('field_phone', 'phone');
     $this->addFieldMapping('field_email', 'email');

@@ -7,6 +7,14 @@
 
 class os_boxes_twitterfeed extends os_boxes_default {
 
+  /**
+   * Create a new box.
+   */
+  protected function __construct() {
+    parent::__construct();
+    $this->cache_time = '1 hour';
+  }
+
   public $embed_as = array(
     'iframe',
     'oembed',
@@ -112,47 +120,38 @@ class os_boxes_twitterfeed extends os_boxes_default {
   public function render() {
     $block = parent::render();
 
-    $twitkey = $this->options['twitter_username'];
-    $num_items = $this->options['num_items'];
-    $followme_link = $this->options['followme_link'];
+    if (!module_exists('twitter_pull')) {
+      return $block;
+    }
 
-    if ($twitkey[0] != '@' || $twitkey[0] != '#') {
-      switch($this->options['twitter_type']) {
-        case 'user':
-          $twitkey = '@' . $twitkey;
-          break;
+    if (($block['content'] = $this->get_cache()) === FALSE) {
+      $twitkey = $this->options['twitter_username'];
+      $num_items = $this->options['num_items'];
+      $followme_link = $this->options['followme_link'];
 
-        case 'hashtag':
-          $twitkey = '#' . $twitkey;
-          break;
+      if ($twitkey[0] != '@' || $twitkey[0] != '#') {
+        switch($this->options['twitter_type']) {
+          case 'user':
+            $twitkey = '@' . $twitkey;
+            break;
+
+          case 'hashtag':
+            $twitkey = '#' . $twitkey;
+            break;
+        }
       }
-    }
 
-    $output = '';
-    if (module_exists('twitter_pull')) {
       $output = twitter_pull_render($twitkey, $title = NULL, $num_items);
+
+      // Appends a followme link.
+      if ($this->options['followme_link']) {
+        $output .= '<div class="twitter-followme">' . l($this->options['followme_text'], $this->options['followme_url']) . '</div>';
+      }
+
+      $block['content'] = $output;
+      $this->set_cache($block['content']);
     }
 
-    // Appends a followme link
-    if ($this->options['followme_link']) {
-      $output .= '<div class="twitter-followme">' . l($this->options['followme_text'], $this->options['followme_url']) . '</div>';
-    }
-
-    $block['content'] = $output;
     return $block;
   }
-
-  /**
-   * Provides no cache for this box.
-   *
-   * Since twitter_pull has it's own caching, the impact of caching here is low.
-   *
-   * Also, running through the theme function changes the last updated times.
-   *
-   * Caching should be added back if we use other services here.
-   */
-  public function cache_info() {
-    return array();
-  }
-
 }

@@ -438,7 +438,6 @@ function os_reader_copy_feed_item_to_news($feed, $vsite) {
   $node->language = LANGUAGE_NONE;
 
   $wrapper = entity_metadata_wrapper('node', $node);
-  $wrapper->body->set(array('value' => $feed->description, 'format' => 'filtered_html'));
   $wrapper->{OG_AUDIENCE_FIELD}->set(array($vsite->id));
   $wrapper->author->set($user->uid);
 
@@ -455,7 +454,11 @@ function os_reader_copy_feed_item_to_news($feed, $vsite) {
 
         if ($images && method_exists($images, 'getAttribute') && $src = $images->getAttribute('src')) {
           $file = system_retrieve_file($src, 'public://', TRUE);
+          // Images are found so delete the tags from the description before
+          // assigning it to the body of the node.
+          $feed->description = preg_replace('/<img[^>]+\>/i', '', $feed->description);
         }
+        $wrapper->body->set(array('value' => $feed->description, 'format' => 'filtered_html'));
       }
     }
     catch (Exception $e) {

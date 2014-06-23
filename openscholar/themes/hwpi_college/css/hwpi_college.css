@@ -62,12 +62,25 @@ blockquote {
 }
 
 #columns a.node-readmore {
-    border-bottom: none;
-    font-size:12px;
-    font-weight:bold;
-    background: url("../../hwpi_basetheme/images/readmore_arrow.gif") no-repeat scroll right center transparent;
-    float: none;
-    padding-right: 11px;
+  border-bottom: none;
+  font-size:12px;
+  font-weight:bold;
+  float: none;
+  padding-right: 11px;
+  position: relative;
+}
+
+#columns a.node-readmore:after {
+  position: absolute;
+  content: '';
+  background-image: url("../../hwpi_basetheme/images/hwpi_basesprite.png");
+  background-position: 0 -575px;
+  height: 9px;
+  width: 6px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  right: 0px;
 }
 
 
@@ -130,42 +143,29 @@ blockquote {
 }
 
 
-#menu-bar ul.nice-menu .menuparent a {
-    background:url('/profiles/openscholar/themes/hwpi_basetheme/images/menu_down_arrowOn.gif') no-repeat scroll right center rgba(0, 0, 0, 0);
+#menu-bar ul.nice-menu .menuparent a:before {
+  background-position: 0 -566px; /* White Arrow */
+}
+
+#menu-bar ul.nice-menu .menuparent.over > a,
+#menu-bar ul.nice-menu .menuparent a:hover {
+  color:#FFF;
+  background-color: #86111E;
+}
+
+#menu-bar ul.nice-menu .menuparent a.active,
+#menu-bar ul.nice-menu .menuparent a.active:hover {
+  color:#FFF;
+  background-color: #6a1319;
 }
 
 .slide-copy h2 {
     color: #FFFFFF;
-
 }
 
 ul.nice-menu-down li ul li ul {
   left: 12em;
 }
-
-#menu-bar ul.nice-menu .menuparent.over > a,
-#menu-bar ul.nice-menu .menuparent a:hover {
-    background: url('../../hwpi_basetheme/images/menu_down_arrowOn.gif') right center no-repeat #86111E;
-}
-
-#menu-bar ul.nice-menu .menuparent a.active,
-#menu-bar ul.nice-menu .menuparent a.active:hover {
-    background: url('../../hwpi_basetheme/images/menu_down_arrowOn.gif') right center no-repeat #6a1319;
-}
-
-
-
-#menu-bar ul.nice-menu .menuparent ul a.active,
-#menu-bar ul.nice-menu .menuparent ul a.active:hover {
-    background: none;
-}
-
-#menu-bar ul.nice-menu ul .menuparent.over > a,
-#menu-bar ul.nice-menu ul .menuparent a:hover,
-#menu-bar ul.nice-menu ul .menuparent a.active {
-     color:#FFF;
-}
-
 
 #menu-bar ul.nice-menu .menuparent ul li a,
 #menu-bar ul.nice-menu .menuparent ul li a.active {
@@ -244,6 +244,7 @@ margin-top:-2px;
 }
 
 #page-title,
+#content-column h2,
 #content-column h3,
 #content-column h4,
 #tinymce h2,
@@ -253,9 +254,10 @@ margin-top:-2px;
     font-weight: normal;
 }
 
+#content-column .block-boxes-os_boxes_html .boxes-box-content h2,
 #tinymce h2,
 #content-column .field-name-body h2 {
-	font-size: 25px;
+	font-size: 24px;
 	padding-bottom: 0;
 }
 
@@ -456,9 +458,9 @@ h1#page-title {
 h2.block-title {
     background: none repeat scroll 0 0 transparent;
  	color: #1F1F1F;
-    font-family: arial,sans-serif;
+    font-family: arial,sans-serif !important;
     font-size: 0.75em;
-    font-weight: bold;
+    font-weight: bold !important;
     letter-spacing: 0;
     line-height: 16px;
     text-transform: uppercase;
@@ -914,6 +916,9 @@ a.rslides_nav {
  	padding:0 !important;
 }
 
+.no-sidebars .region-content-top .block-boxes-os_slideshow_box + .block {
+padding:0 20px;
+}
 
 
 

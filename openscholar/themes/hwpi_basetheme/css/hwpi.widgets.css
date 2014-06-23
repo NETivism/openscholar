@@ -206,14 +206,15 @@ table td.mini .mini-day-on a {
   display: inline-block;
   font-size: 0 !important;
   outline: none;
+  box-sizing: border-box;
 }
 
 .view .date-nav-wrapper .date-prev a {
-  background: url('../images/cal_leftarrow.gif') no-repeat;
+  background: url('../images/hwpi_basesprite.png') no-repeat 0 -480px;
 }
 
 .view .date-nav-wrapper .date-next a  {
-  background: url('../images/cal_rightarrow.gif') 0 1px no-repeat;
+  background: url('../images/hwpi_basesprite.png') -15px -480px no-repeat;
 }
 
 .date-nav h3  {

@@ -128,7 +128,6 @@
 #edit-layout-unused-widgets .cp-layout-widget,
 .cp-layout-widget.ui-sortable-helper {
   display: inline-block !important;
-  background: url("images/widget-bg.png") no-repeat scroll 50% 10px transparent;
   color: #444545;
   cursor: move;
   font-weight: bold;
@@ -143,92 +142,98 @@
   line-height:14px;
 }
 
-
-#edit-layout-unused-widgets .os_boxes_addthis {
-	background: url("images/widgetIcons/addThis.png") no-repeat scroll 50% 10px transparent;
+#edit-layout-unused-widgets .cp-layout-widget .widget-icon,
+.cp-layout-widget.ui-sortable-helper .widget-icon{
+  width: 48px;
+  height: 48px;
+  position: absolute;
+  top: 10px;
+  left: 29px;
+  background-image: url("images/cp-layout-sprite.png");
 }
 
 
-#edit-layout-unused-widgets .os_boxes_bio {
-	background: url("images/widgetIcons/bio.png") no-repeat scroll 50% 10px transparent;
+.os_boxes_addthis .widget-icon {
+	background-position-y: -49px
 }
 
 
-#edit-layout-unused-widgets .os_boxes_rss,
-#edit-layout-unused-widgets .os_boxes_feedreader {
-	background: url("images/widgetIcons/rss.png") no-repeat scroll 50% 10px transparent;
-}
-
-#edit-layout-unused-widgets #boxes-os_booklets_recent_docs,
-#edit-layout-unused-widgets .os_boxes_booktoc,
-#edit-layout-unused-widgets #views-os_booklets-block {
-	background: url("images/widgetIcons/book.png") no-repeat scroll 50% 10px transparent;
-}
-
-#edit-layout-unused-widgets .os_boxes_slideshow {
-	background: url("images/widgetIcons/slideshow.png") no-repeat scroll 50% 10px transparent;
-}
-
-#edit-layout-unused-widgets .os_boxes_html {
-	background: url("images/widgetIcons/text.png") no-repeat scroll 50% 10px transparent;
-}
-
-#edit-layout-unused-widgets #views-os_events-block_1,
-#edit-layout-unused-widgets #views-os_events-block_2 {
-	background: url("images/widgetIcons/calendar.png") no-repeat scroll 50% 10px transparent;
-}
-
-#edit-layout-unused-widgets #views-os_software_releases-block_1 {
-	background: url("images/widgetIcons/software.png") no-repeat scroll 50% 10px transparent;
-}
-
-#edit-layout-unused-widgets #boxes-os_news_latest {
-	background: url("images/widgetIcons/announcement.png") no-repeat scroll 50% 10px transparent;
-}
-
-#edit-layout-unused-widgets #boxes-os_presentations_recent {
-	background: url("images/widgetIcons/presentation.png") no-repeat scroll 50% 10px transparent;
-}
-
-#edit-layout-unused-widgets #boxes-os_publications_recent,
-#edit-layout-unused-widgets .os_boxes_pub_ca,
-#edit-layout-unused-widgets .os_boxes_pub_year {
-	background: url("images/widgetIcons/publications.png") no-repeat scroll 50% 10px transparent;
-}
-
-#edit-layout-unused-widgets .os_boxes_media {
-	background: url("images/widgetIcons/camera.png") no-repeat scroll 50% 10px transparent;
-}
-
-#edit-layout-unused-widgets .os_taxonomy_fbt {
-	background: url("images/widgetIcons/addThis.png") no-repeat scroll 50% 10px transparent;
-}
-
-#edit-layout-unused-widgets #views-os_blog-block {
-	background: url("images/widgetIcons/post.png") no-repeat scroll 50% 10px transparent;
-}
-
-#edit-layout-unused-widgets .fb_social_activityf,
-#edit-layout-unused-widgets .fb_social_recommend,
-#edit-layout-unused-widgets .fb_social_comments,
-#edit-layout-unused-widgets .fb_social_livestream,
-#edit-layout-unused-widgets .fb_social_facepile,
-#edit-layout-unused-widgets .fb_social_send,
-#edit-layout-unused-widgets .fb_social_likebox,
-#edit-layout-unused-widgets .fb_social_like {
-	background: url("images/widgetIcons/facebook.png") no-repeat scroll 50% 10px transparent;
+.os_boxes_bio .widget-icon {
+	background-position-y: -145px;
 }
 
 
-#edit-layout-unused-widgets .os_boxes_twitterfeed {
-	background: url("images/widgetIcons/twitter.png") no-repeat scroll 50% 10px transparent;
+.os_boxes_rss .widget-icon,
+.os_boxes_feedreader .widget-icon {
+	background-position-y: -670px;
 }
 
-#edit-layout-unused-widgets .os_taxonomy_fbt {
-	background: url("images/widgetIcons/taxo.png") no-repeat scroll 50% 10px transparent;
+#boxes-os_booklets_recent_docs .widget-icon,
+.os_boxes_booktoc .widget-icon,
+#views-os_booklets-block .widget-icon {
+  background-position-y: -193px;
 }
 
+.os_boxes_slideshow .widget-icon,
+.os_slideshow_box .widget-icon {
+  background-position-y: -766px;
+}
 
+.os_boxes_html .widget-icon {
+  background-position-y: -910px;
+}
+
+#views-os_events-block_1 .widget-icon,
+#views-os_events-block_2 .widget-icon {
+  background-position-y: -241px;
+}
+
+#views-os_software_releases-block_1 .widget-icon {
+  background-position-y: -814px;
+}
+
+#boxes-os_news_latest .widget-icon {
+  background-position-y: -97px;
+}
+
+#boxes-os_presentations_recent .widget-icon {
+  background-position-y: -575px;
+}
+
+#boxes-os_publications_recent .widget-icon,
+.os_boxes_pub_ca .widget-icon,
+.os_boxes_pub_year .widget-icon {
+  background-position-y: -622px;
+}
+
+.os_boxes_media .widget-icon {
+  background-position-y: -289px;
+}
+
+#views-os_blog-block .widget-icon {
+  background-position-y: -528px;
+}
+
+.fb_social_activityf .widget-icon,
+.fb_social_recommend .widget-icon,
+.fb_social_comments .widget-icon,
+.fb_social_livestream .widget-icon,
+.fb_social_facepile .widget-icon,
+.fb_social_send .widget-icon,
+.fb_social_likebox .widget-icon,
+.fb_social_like .widget-icon {
+  background-position-y: -377px;
+}
+
+.os_boxes_twitterfeed .widget-icon {
+  background-position-y: -958px;
+}
+
+.os_taxonomy_fbt .widget-icon {
+  background-position-y: -862px;
+}
+
+#edit-layout-unused-widgets .cp-layout-widget.disabled,
 #edit-layout-unused-widgets .cp-layout-widget.hidden {
   display: none !important;
 }
@@ -256,7 +261,6 @@
   cursor: move;
 }
 
-#edit-layout-unused-widgets .cp-layout-widget.disabled,
 .cp-region .cp-layout-widget.disabled {
   display: none !important;
 }
@@ -267,7 +271,7 @@
 }
 
 #edit-layout .ui-sortable .close-this {
-  background: url("../../../../../themes/cp_theme/images/scholarbase-sprite.png") no-repeat scroll 0 0 transparent;
+  background: url("../../../../../themes/cp_theme/images/cp-sprite.png") no-repeat scroll 0 0 transparent;
   height: 12px;
   text-indent: -999em;
   width: 12px;
@@ -278,11 +282,11 @@
 
 #edit-layout a.edit {
   background: url("images/configGear.png") no-repeat scroll 0 0 transparent;
+  display: inline-block;
   color: transparent;
   text-indent: -999em;
   width:15px;
   height:15px;
-  padding-bottom:6px;
 }
 
 .widget-controls a.delete {
@@ -300,7 +304,7 @@
 
 /* WIDGET STYLES IN UNUSED WIDGET BOX */
 .widget-container a.delete {
-  background: url("../../../../../themes/cp_theme/images/scholarbase-sprite.png") no-repeat scroll 0 -226px transparent;
+  background: url("../../../../../themes/cp_theme/images/cp-sprite.png") no-repeat scroll 0 -226px transparent;
   display: block;
   height: 11px;
   left: 82px;
@@ -311,7 +315,7 @@
 }
 
 .widget-container a.delete:hover {
-  background: url("../../../../../themes/cp_theme/images/scholarbase-sprite.png") no-repeat scroll -14px -241px transparent;
+  background: url("../../../../../themes/cp_theme/images/cp-sprite.png") no-repeat scroll -14px -241px transparent;
   display: block;
   height: 11px;
   text-indent: -999em;
@@ -393,7 +397,13 @@
   position: relative;
   top: 15px;
   width: 99px;
-  background: url('images/websiteLayoutBarLabel.png') no-repeat;
+  background-color: #c0c0c0;
+  border-radius: 3px 3px 0 0;
+  font-size: smaller;
+  font-weight: bolder;
+  text-align: center;
+  vertical-align: middle;
+  padding-bottom: 4px;
 }
  
     
@@ -442,7 +452,7 @@ html.js .page-cp-build-layout div.ctools-dropdown div.ctools-dropdown-container 
   float:right;
   display:inline;
   width:2%;
-  background: url("../../../../../themes/cp_theme/images/scholarbase-sprite.png") no-repeat scroll 0 -297px transparent;
+  background: url("../../../../../themes/cp_theme/images/cp-sprite.png") no-repeat scroll 0 -297px transparent;
   height: 19px;
   text-indent: -999em;
   padding-left: 25px;

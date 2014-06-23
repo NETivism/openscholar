@@ -16,47 +16,47 @@ Feature:
   @api @first
   Scenario: Testing private vsite cannot be seen by anonymous users.
     Given I am logging in as "john"
-    When I change privacy of the site "obama" to "Invite only during site creation. "
-    And I click "Log out"
-    And I go to "obama"
-    Then I should get a "403" HTTP response
+     When I change privacy of the site "obama" to "Invite only during site creation. "
+      And I click "Log out"
+      And I go to "obama"
+     Then I should get a "403" HTTP response
 
   @api @first
   Scenario: Testing private vsite cannot be seen by members from another vsite.
     Given I am logging in as "alexander"
-    And I go to "obama"
-    Then I should get a "403" HTTP response
+      And I go to "obama"
+     Then I should get a "403" HTTP response
 
   @api @first
   Scenario: Testing private vsite can be seen by support team members.
     Given I am logging in as "bill"
-    And I go to "obama"
-    And I should get a "200" HTTP response
-    And I click "Support obama"
-    And I should see "Are you sure you want to join the web site"
-    And I press "Join"
-    Then I should see "Your subscription request was sent."
+      And I go to "obama"
+      And I should get a "200" HTTP response
+      And I click "Support obama"
+      And I should see "Are you sure you want to join the web site"
+      And I press "Join"
+     Then I should see "Your subscription request was sent."
 
   @api @first
   Scenario: Testing unsubscribing a support team member.
     Given I am logging in as "bill"
-    And I go to "obama"
-    And I should get a "200" HTTP response
-    And I click "Unsubscribe obama"
-    And I should see "Are you sure you want to unsubscribe from the group"
-    And I press "Remove"
-    Then I should see "Support obama"
+      And I go to "obama"
+      And I should get a "200" HTTP response
+      And I click "Unsubscribe obama"
+      And I should see "Are you sure you want to unsubscribe from the group"
+      And I press "Remove"
+     Then I should see "Support obama"
 
   @api @first
   Scenario: Testing public vsite can be viewed by anonymous users.
     Given I am logging in as "john"
-    When I change privacy of the site "obama" to "Public on the web. "
-    And I click "Log out"
-    And I visit "obama"
-    Then I should get a "200" HTTP response
+     When I change privacy of the site "obama" to "Public on the web. "
+      And I click "Log out"
+      And I visit "obama"
+     Then I should get a "200" HTTP response
 
   @api @first
   Scenario: Testing public vsite can be seen by members from another vsite.
     Given I am logging in as "alexander"
-    And I visit "obama"
-    Then I should get a "200" HTTP response
+      And I visit "obama"
+     Then I should get a "200" HTTP response

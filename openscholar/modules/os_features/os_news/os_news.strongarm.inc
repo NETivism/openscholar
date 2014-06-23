@@ -82,6 +82,9 @@ function os_news_strongarm() {
       'full' => array(
         'custom_settings' => TRUE,
       ),
+      'rss' => array(
+        'custom_settings' => TRUE,
+      ),
     ),
   );
   $export['field_bundle_settings_node__news'] = $strongarm;

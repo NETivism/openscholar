@@ -154,15 +154,15 @@ function os_boxes_get_boxes_plugins($name = NULL) {
     ctools_include('plugins');
     $boxes = ctools_get_plugins('boxes', 'plugins');
     drupal_alter('boxes_plugins', $boxes);
-    
+
     unset($boxes['twitter']);
   }
-    
-  
+
+
   if (isset($name)) {
     return isset($boxes[$name]) ? $boxes[$name] : FALSE;
   }
-  
+
   return $boxes;
 }
 
@@ -540,4 +540,65 @@ function _os_image_remove_handler($form, $form_state) {
     form_set_value($values_element, NULL, $form_state);
     drupal_array_set_nested_value($form_state['input'], $values_element['#parents'], NULL);
   }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function os_boxes_entity_insert($entity, $type) {
+  os_boxes_invalidate_cache($entity, $type);
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function os_boxes_entity_delete($entity, $type) {
+  os_boxes_invalidate_cache($entity, $type);
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function os_boxes_entity_update($entity, $type) {
+  os_boxes_invalidate_cache($entity, $type);
+}
+
+/**
+ * Invalidating the boxes cache of the VSite.
+ *
+ * @param $entity
+ *   The entity object which got affected by CRUD operation or widget settings
+ *   change.
+ * @param $type
+ *   The entity type.
+ */
+function os_boxes_invalidate_cache($entity, $type) {
+
+  $wrapper = entity_metadata_wrapper($type, $entity);
+  if (!$wrapper->__isset(OG_AUDIENCE_FIELD)) {
+    return;
+  }
+
+  $gid = $wrapper->{OG_AUDIENCE_FIELD}->get(0)->getIdentifier();
+  $cid = 'os_boxes_cache:' . $gid . ':' . $type . ':' . $entity->type;
+  $general_cid = 'os_boxes_cache:' . $gid;
+
+  // Flush raw data.
+  cache_clear_all($cid, 'cache_os_boxes', TRUE);
+
+  // Flush general raw data.
+  cache_clear_all($general_cid, 'cache_os_boxes', TRUE);
+
+  // Flush assets.
+  cache_clear_all('assets:' . $cid, 'cache_os_boxes', TRUE);
+
+  // Flush general assets.
+  cache_clear_all('assets:' . $general_cid, 'cache_os_boxes', TRUE);
+}
+
+/**
+ * Implements hook_flush_caches().
+ */
+function os_boxes_flush_caches() {
+  return array('cache_os_boxes');
 }

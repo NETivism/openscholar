@@ -43,3 +43,11 @@ function os_profiles_update_7003() {
   // Clear the cache.
   field_cache_clear();
 }
+
+/**
+ * Adding the field prefix to the os profile bundle.
+ */
+function os_profiles_update_7004() {
+  features_revert(array('os_profiles' => array('field_base', 'field_instance', 'feeds_tamper')));
+}
+

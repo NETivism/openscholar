@@ -272,89 +272,70 @@ function cp_user_og_ui_admin_permissions($variables) {
 
   $role_names = $form['role_names']['#value'];
 
-  // Only CRUD permissions should be displayed in the UI. Create an array of
-  // the allowed permissions so we can filter the list by it.
-  // Get all permissions from the enabled applications, while keeping their
-  // application info.
-  $allowed_permissions = array();
-
-  // In addition to CRUD permissions, the permission 'Change theme' is the only
-  // non-CRUD permission that should be displayed on the list.
-  foreach (vsite_get_os_override_permissions() as $permission) {
-    $allowed_permissions[$permission] = 'general';
-  }
-  $allowed_permissions['change theme'] = 'general';
-  $allowed_permissions['administer taxonomy'] = 'general';
-  $allowed_permissions['edit terms'] = 'general';
-  $allowed_permissions['delete terms'] = 'general';
-
-  foreach (os_get_bundles_per_app(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $app_name => $bundles) {
-    foreach (array_keys($bundles) as $bundle) {
-      // Get bundle permissions with their related app name.
-      $bundle_permissions = array_fill_keys(array_keys(og_list_permissions($bundle)), $app_name);
-
-      // Merge bundle permissions to all permissions.
-      $allowed_permissions = array_merge($allowed_permissions, $bundle_permissions);
-    }
-  }
-
-  ksort($allowed_permissions);
+  $allowed_permissions = cp_user_get_allowed_permissions();
 
   $rows_per_category = array();
-  foreach (element_children($form['permission']) as $key) {
-    if (is_numeric($key)) {
+
+  foreach (element_children($form['permission']) as $permission) {
+    if (is_numeric($permission)) {
       // Module name, not for display in the UI.
       // Not including it in the table is not enough, because later we call the
       // function drupal_render_children() which will render it anyway unless
       // we unset it.
-      unset($form['permission'][$key]);
+      unset($form['permission'][$permission]);
       continue;
     }
 
-    if (!in_array($key, array_keys($allowed_permissions))) {
-      
-    	if(!user_access('administer permissions')) {
+    $show_permission = TRUE;
+    if (!in_array($permission, array_keys($allowed_permissions))) {
+
+    	if (!user_access('administer permissions')) {
         // Do not show this permission in the UI.
         // Not including it in the table is not enough, because later we call the
         // function drupal_render_children() which will render it anyway unless
         // we unset it.
-        unset($form['permission'][$key]);
-      		
+        unset($form['permission'][$permission]);
+
         // We must also unset all the checkboxes related to the permission, one
         // for each role, so they would not be rendered later.
         foreach (element_children($form['checkboxes']) as $rid) {
-        	unset($form['checkboxes'][$rid][$key]);
+          unset($form['checkboxes'][$rid][$permission]);
         }
+
+        $show_permission = FALSE;
         continue;
-    	} else {
-        // This is an super-admin type user
-        $form['permission'][$key]['#markup'] .= " **Admin Only**";
+    	}
+      else {
+        // This is an super-admin type user.
+        $form['permission'][$permission]['#markup'] .= '**' . t('Admin Only') . '**';
     	}
     }
 
-    $row = array();
+    if ($show_permission) {
+      $row = array();
 
-    // Permission row.
-    $row[] = array(
-      'data' => drupal_render($form['permission'][$key]),
-      'class' => array('permission'),
-    );
+      // Permission row.
+      $row[] = array(
+        'data' => drupal_render($form['permission'][$permission]),
+        'class' => array('permission'),
+      );
 
-    foreach (element_children($form['checkboxes']) as $rid) {
-      if (empty($roles_human_names[$rid])) {
-        // Some roles are not to be shown on the UI, for example 'non-member',
-        // so do not display roles that don't exist in the "human" names list.
-        $form['checkboxes'][$rid][$key]['#access'] = FALSE;
-        continue;
+      foreach (element_children($form['checkboxes']) as $rid) {
+        if (empty($roles_human_names[$rid])) {
+          // Some roles are not to be shown on the UI, for example 'non-member',
+          // so do not display roles that don't exist in the "human" names list.
+          $form['checkboxes'][$rid][$permission]['#access'] = FALSE;
+          continue;
+        }
+        $form['checkboxes'][$rid][$permission]['#title'] = $role_names[$rid] . ': ' . $form['permission'][$permission]['#markup'];
+        $form['checkboxes'][$rid][$permission]['#title_display'] = 'invisible';
+        $row[] = array('data' => drupal_render($form['checkboxes'][$rid][$permission]), 'class' => array('checkbox'));
       }
-      $form['checkboxes'][$rid][$key]['#title'] = $role_names[$rid] . ': ' . $form['permission'][$key]['#markup'];
-      $form['checkboxes'][$rid][$key]['#title_display'] = 'invisible';
-      $row[] = array('data' => drupal_render($form['checkboxes'][$rid][$key]), 'class' => array('checkbox'));
-    }
 
-    // Add category title row.
-    $category = cp_user_add_category_title_to_table($key, $allowed_permissions, $rows_per_category, count($row));
-    $rows_per_category[$category][] = $row;
+      // Add category title row.
+      $category = cp_user_add_category_title_to_table($permission, $allowed_permissions, $rows_per_category, count($row));
+      $rows_per_category[$category][] = $row;
+    }
   }
 
   ksort($rows_per_category);
@@ -389,6 +370,128 @@ function cp_user_og_ui_admin_permissions($variables) {
 }
 
 /**
+ * Return the permissions are used may see.
+ *
+ * @return array
+ */
+function cp_user_get_allowed_permissions() {
+  // Get the hidden permissions.
+  // Only CRUD permissions should be displayed in the UI. Create an array of
+  // the allowed permissions so we can filter the list by it.
+  // Get all permissions from the enabled applications, while keeping their
+  // application info.
+  $allowed_permissions = array();
+
+  // In addition to CRUD permissions, the permission 'Change theme' is the only
+  // non-CRUD permission that should be displayed on the list.
+  foreach (vsite_get_os_override_permissions() as $permission) {
+    $allowed_permissions[$permission] = 'general';
+  }
+  $allowed_permissions['change theme'] = 'general';
+  $allowed_permissions['administer taxonomy'] = 'general';
+  $allowed_permissions['edit terms'] = 'general';
+  $allowed_permissions['delete terms'] = 'general';
+
+  foreach (os_get_bundles_per_app(array(OS_PUBLIC_APP, OS_PRIVATE_APP)) as $app_name => $bundles) {
+    foreach (array_keys($bundles) as $bundle) {
+      // Get bundle permissions with their related app name.
+      $bundle_permissions = array_fill_keys(array_keys(og_list_permissions($bundle)), $app_name);
+
+      // Merge bundle permissions to all permissions.
+      $allowed_permissions = array_merge($allowed_permissions, $bundle_permissions);
+    }
+  }
+
+  ksort($allowed_permissions);
+  return $allowed_permissions;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function cp_user_form_og_ui_admin_permissions_alter(&$form, &$form_state) {
+  if (!$vsite = vsite_get_vsite()) {
+    // Outside if a VSite context.
+    return;
+  }
+
+
+  $item = menu_get_item();
+  if (strpos($item['path'], 'admin/') === 0) {
+    // Inside the admin, use OG's theme function.
+    return;
+  }
+
+  if (og_is_group_default_access('node', $vsite->id)) {
+    // Group is using default permissions.
+    return;
+  }
+
+  $form['hidden_permissions']['#tree'] = TRUE;
+
+  $allowed_permissions = cp_user_get_allowed_permissions();
+  $hidden_permissions = array();
+
+  foreach (element_children($form['permission']) as $key) {
+    if (is_numeric($key)) {
+      // Module name, not for display in the UI.
+      // Not including it in the table is not enough, because later we call the
+      // function drupal_render_children() which will render it anyway unless
+      // we unset it.
+      continue;
+    }
+
+    if (!in_array($key, array_keys($allowed_permissions))) {
+
+      if (!user_access('administer permissions')) {
+        // Do not show this permission in the UI.
+        // Not including it in the table is not enough, because later we call the
+        // function drupal_render_children() which will render it anyway unless
+        // we unset it.
+        $hidden_permissions[] = $key;
+      }
+    }
+  }
+
+  $bundle = $vsite->group->type;
+
+  // The role IDs of the group.
+  $group_roles = og_roles('node', $bundle, $vsite->id);
+  $rids = array_keys($group_roles);
+
+  // Get the roles' permissions from the default group.
+  $roles_permissions = og_role_permissions(drupal_map_assoc($rids));
+
+  foreach ($roles_permissions as $rid => $role_permissions) {
+
+    foreach ($hidden_permissions as $hidden_permission) {
+      $form['hidden_permissions'][$rid][$hidden_permission] = array(
+        '#type' => 'value',
+        '#value' => !empty($role_permissions[$hidden_permission]),
+      );
+    }
+  }
+
+  $form['#validate'][] = 'cp_user_og_ui_admin_permissions_validate';
+}
+
+/**
+ * Validate handler; Add the missing permissions.
+ */
+function cp_user_og_ui_admin_permissions_validate($form, &$form_state) {
+  if (empty($form_state['values']['hidden_permissions'])) {
+    // No permissions are hidden.
+    return;
+  }
+
+  foreach ($form_state['values']['hidden_permissions'] as $rid => $permissions) {
+    foreach ($permissions as $permission => $value) {
+      $form_state['values'][$rid][$permission] = $value;
+    }
+  }
+}
+
+/**
  * Get category from permission key, and add category title if needed.
  *
  * @param $permission
@@ -406,7 +509,7 @@ function cp_user_og_ui_admin_permissions($variables) {
 function cp_user_add_category_title_to_table($permission, $allowed_permissions, &$rows_per_category, $number_of_columns) {
   // Get spaces features in order to get human readable application name.
   $spaces_features = spaces_features();
-  $category = $allowed_permissions[$permission];
+  $category = !empty($allowed_permissions[$permission]) ? $allowed_permissions[$permission] : t('general');
   if (empty($rows_per_category[$category])) {
     $title = t('General permissions');
 

@@ -1,12 +1,38 @@
 <?php
 
 /**
- * Refreshes exported variables of the Links app
+ * Refreshes exported variables of the Links app.
  */
 function os_links_update_7000() {
   $revert = array(
     'os_links' => array(
-      'variable'
+      'variable',
+    )
+  );
+
+  features_revert($revert);
+}
+
+/**
+ * Reverts field instance to remove the URL full view mode.
+ */
+function os_links_update_7001() {
+  $revert = array(
+    'os_links' => array(
+      'field_instance',
+    )
+  );
+
+  features_revert($revert);
+}
+
+/**
+ * Reverts variable to enable customised full view mode.
+ */
+function os_links_update_7002() {
+  $revert = array(
+    'os_links' => array(
+      'variable',
     )
   );
 

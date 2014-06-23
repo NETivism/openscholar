@@ -230,5 +230,18 @@ function os_links_strongarm() {
   $strongarm->value = 'links/[node:title]';
   $export['pathauto_node_link_pattern'] = $strongarm;
 
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'field_bundle_settings_node__link';
+  $strongarm->value = array(
+    'view_modes' => array(
+      'full' => array(
+        'custom_settings' => TRUE,
+      ),
+    ),
+  );
+  $export['field_bundle_settings_node__link'] = $strongarm;
+
   return $export;
 }

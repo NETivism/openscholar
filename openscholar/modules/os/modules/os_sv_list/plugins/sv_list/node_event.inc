@@ -87,4 +87,18 @@ class sv_list_node_event extends sv_list_plugin  {
 
     return $render;
   }
+
+  /**
+   * Set time cache based on options by a time string.
+   *
+   * @param $options
+   *   Box options.
+   * @param $cache_time
+   *   Cache time string.
+   */
+  public function set_cache_time($options, &$cache_time) {
+    if ($options['content_type'] == 'event' && $options['sort_by'] == 'sort_event') {
+      $cache_time = "5 minutes";
+    }
+  }
 }

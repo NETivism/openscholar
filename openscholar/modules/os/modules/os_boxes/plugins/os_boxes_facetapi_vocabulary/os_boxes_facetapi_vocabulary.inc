@@ -156,13 +156,12 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
 
     if ($page_id = $this->is_empty_search_needed()) {
       // Block delta is needed since $delta_og_vocab is not unique between sites
-      $cid = 'sm_og_vocabulary:' . $delta . ':' . $delta_og_vocab . ':' . $page_id;
+      $cid = 'sm_og_vocabulary:' . $delta_og_vocab . ':' . $page_id;
+      $this->set_cache_id($cid);
+
     }
     // Verify the cache is still valid, based on time since created.
-    if ($cid && ($cache = cache_get($cid)) && $cache->created > REQUEST_TIME - variable_get('facetapi_vocabulary_cache_timeout', 300)) {
-      $block = $cache->data;
-    }
-    else {
+    if (($block = $this->get_cache()) === FALSE) {
       // Verify the facet block has something to work on (means - it is in a solr
       // search page). If not - execute the empty solr search without showing
       // the results.
@@ -181,6 +180,11 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
         // os_boxes_widget_submit() renders blocks into a 'dummy' region, but
         // gives errors in case the content is empty, hence the space.
         $block['content'] = ' ';
+
+        // While block is empty, caching NULL will provide the needed caching.
+        if ($set_cache) {
+          $this->set_cache(NULL);
+        }
       }
       else {
         if (!empty($this->options['vocabularies'])) {
@@ -212,12 +216,34 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
 
         $block['content'] = render($block['content']);
         if ($set_cache) {
-          $cid = 'sm_og_vocabulary:' . $delta . ':' . $delta_og_vocab . ':' . $page_id;
-          cache_set($cid, $block);
+          $this->set_cache($block);
         }
       }
     }
     return $block;
+  }
+
+  /**
+   * When submitting a box we need to invalidate here.
+   */
+  public function options_submit() {
+    if (module_exists('vsite') && !$vsite = vsite_get_vsite()) {
+      return;
+    }
+
+    // We try to delete the cache of a newly selected bundle, leaving the old cached
+    // info unused. If we will re-select the old bundle its cache will be cleared
+    // next time.
+    if ($this->options['bundle'] && is_string($this->options['bundle'])) {
+      $bundle = 'node:' . $this->options['bundle'];
+    }
+    else {
+      $bundle = NULL;
+    }
+    $cid = $this->set_cache_id($bundle);
+
+    cache_clear_all($cid, 'cache_os_boxes', TRUE);
+    cache_clear_all('assets:' . $cid, 'cache_os_boxes', TRUE);
   }
 }
 

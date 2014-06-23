@@ -10,49 +10,67 @@ h1 a,h2 a,h3 a,h4 a,
 h1.page-title, 
  h1#page-title {
 	font-family:'News Cycle',arial;
-	}
+}
 
 .not-front #content-column p,
 #content-column p {
 	font-family:georgia;
-	}
+}
 
 #boxes-box-site_info {
 	color: #777;
-	}
+}
 
 #boxes-box-site_info h1 a {
 	font-weight:bold;
 	font-size:30px;
 	color: #D16103;
-	}
+}
+
+#boxes-box-site_info h1 + h2 {
+margin-bottom: 0;
+}
+
+#boxes-box-site_info p {
+margin-bottom: 20px;
+font-family:arial;
+font-size: 15px;
+}
+
+#boxes-box-site_info p a {
+color:#215990;
+}
 
 h1#page-title {
-	color:#D16103;font-size: 27px;
-	}
+	color:#D16103;
+	font-size: 27px;
+}
 
 #menu-bar {
-background: #D16103;
+  background: #D16103;
 }
 
 
 #menu-bar ul.nice-menu a.active,
 #menu-bar ul.nice-menu a:hover {
   background: #F3F3F1;
-
 }
 
 #menu-bar ul.nice-menu .menuparent.over > a,
 #menu-bar ul.nice-menu .menuparent a:hover,
 #menu-bar ul.nice-menu .menuparent a.active {
-    background: url(/profiles/openscholar/themes/hwpi_basetheme/images/menu_down_arrowOff.gif) right center no-repeat #F3F3F1;
+    background-color: #F3F3F1;
 }
 
+#menu-bar ul.nice-menu .menuparent.over > a:before,
+#menu-bar ul.nice-menu .menuparent a:hover:before,
+#menu-bar ul.nice-menu .menuparent a.active:before {
+  background-position: -12px -566px; /* Blue Arrow */
+}
 
 #menu-bar ul.nice-menu ul {
-    background:#F3F3F1;
+  background:#F3F3F1;
 }
-
 
 #menu-bar ul.nice-menu .menuparent ul li a.active,
 #menu-bar ul.nice-menu a.active,
@@ -60,18 +78,20 @@ background: #D16103;
 #menu-bar ul.nice-menu .menuparent ul li a,
 #menu-bar ul.nice-menu .menuparent.over > a,
 #menu-bar ul.nice-menu .menuparent a:hover, 
-#menu-bar ul.nice-menu .menuparent a.active {color:#215990;}
-
-#menu-bar ul.nice-menu .menuparent ul li a:hover {color:#4E84C4;}
-
-#header {
-background: #F3F3F1;
-
+#menu-bar ul.nice-menu .menuparent a.active {
+  color: #215990;
 }
 
+#menu-bar ul.nice-menu .menuparent ul li a:hover {
+  color: #4E84C4;
+}
+
+#header {
+  background: #F3F3F1;
+}
 
 .region-header-third ul.nice-menu a {
-color: #215990;
+  color: #215990;
 }
 
 
@@ -116,19 +136,8 @@ font-size: 1.14em;
 line-height: 18px;
 }
 
-
 #search-block-form .form-item label {
 color: #3d3d3d;
-}
-
-
-.event-start .event-start {
-background: url(/profiles/openscholar/themes/hwpi_basetheme/images/event-shield.png) no-repeat 0 0 transparent;
-
-}
-
-#search-block-form input.form-submit, #search-block-form #edit-submit, #search-form #edit-submit {
-background-position: 2px -373px;
 }
 
 a.rslides_nav {
@@ -155,5 +164,6 @@ background: #D16103 !important;
 }
 
 #search-block-form input.form-submit, #search-block-form #edit-submit, #search-form #edit-submit {
-background: url(/profiles/openscholar/themes/hwpi_basetheme/images/hwpi_basesprite.png) no-repeat scroll 2px -440px #D16103;
+  background-position: 2px -440px;
+  background-color: #D16103;
 }

@@ -23,30 +23,30 @@ border-top:3px solid #DDD;
 }
 
 #menu-bar ul.nice-menu ul {
-    background: #293352;
+  background: #293352;
 }
 
-#menu-bar ul.nice-menu .menuparent a {
-    background: url('/profiles/openscholar/themes/hwpi_basetheme/images/menu_down_arrowOn.gif') right center no-repeat;
+#menu-bar ul.nice-menu .menuparent a:before {
+  background-position: 0 -566px; /* White Arrow */
 }
 
 #menu-bar ul.nice-menu .menuparent ul li a:hover,
 #menu-bar ul.nice-menu .menuparent ul li a.active {
-     color:#FFF;
+   color:#FFF;
 }
 
 #menu-bar ul.nice-menu ul .menuparent.over > a,
 #menu-bar ul.nice-menu ul .menuparent a:hover,
 #menu-bar ul.nice-menu ul .menuparent a.active {
-     color:#FFF;
+   color:#FFF;
 }
 
 .sidebar .block, .front #content-column .block, .node-person .block-inner, .comment-wrapper {
-    border-top: none;
+  border-top: none;
 }
 
 .front .region-content-top .block.block-boxes-os_slideshow_box {
-    border-top: 3px solid #D16103;
+  border-top: 3px solid #D16103;
 }
 
 #columns h2.block-title {

@@ -39,61 +39,66 @@ function os_profiles_feeds_importer_default() {
         'authorize' => 1,
         'mappings' => array(
           0 => array(
+            'source' => 'Prefix',
+            'target' => 'field_prefix',
+            'unique' => FALSE,
+          ),
+          1 => array(
             'source' => 'First name',
             'target' => 'field_first_name',
             'unique' => FALSE,
           ),
-          1 => array(
+          2 => array(
             'source' => 'Middle name',
             'target' => 'field_middle_name_or_initial',
             'unique' => FALSE,
           ),
-          2 => array(
+          3 => array(
             'source' => 'Last name',
             'target' => 'field_last_name',
             'unique' => FALSE,
           ),
-          3 => array(
+          4 => array(
             'source' => 'Photo',
             'target' => 'person_photo',
             'unique' => FALSE,
           ),
-          4 => array(
+          5 => array(
             'source' => 'Titles',
             'target' => 'field_professional_title',
             'unique' => FALSE,
           ),
-          5 => array(
+          6 => array(
             'source' => 'Address',
             'target' => 'field_address',
             'unique' => FALSE,
           ),
-          6 => array(
+          7 => array(
             'source' => 'Phone',
             'target' => 'field_phone',
             'unique' => FALSE,
           ),
-          7 => array(
+          8 => array(
             'source' => 'Email',
             'target' => 'field_email',
             'unique' => FALSE,
           ),
-          8 => array(
+          9 => array(
             'source' => 'Websites title',
             'target' => 'field_website:title',
             'unique' => FALSE,
           ),
-          9 => array(
+          10 => array(
             'source' => 'Websites url',
             'target' => 'field_website:url',
             'unique' => FALSE,
           ),
-          10 => array(
+          11 => array(
             'source' => 'Short bio',
             'target' => 'body',
             'unique' => FALSE,
           ),
-          11 => array(
+          12 => array(
             'source' => 'Files',
             'target' => 'file',
             'unique' => FALSE,

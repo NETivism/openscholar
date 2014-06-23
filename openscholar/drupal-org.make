@@ -5,6 +5,9 @@ api = 2
 projects[admin_menu][subdir] = "contrib"
 projects[admin_menu][version] = 3.0-rc1
 
+projects[advagg][subdir] = "contrib"
+projects[advagg][version] = 2.6
+
 projects[apachesolr][subdir] = "contrib"
 projects[apachesolr][version] = 1.6
 
@@ -166,6 +169,9 @@ projects[hierarchical_taxonomy][patch][] = "http://drupal.org/files/2034713-hs-c
 projects[html_title][subdir] = "contrib"
 projects[html_title][version] = 1.1
 
+projects[imageapi_optimize][subdir] = "contrib"
+projects[imageapi_optimize][version] = 1.0
+
 projects[imagefield_crop][subdir] = "contrib"
 ;projects[imagefield_crop][version] = 2.0
 projects[imagefield_crop][download][type] = git
@@ -255,6 +261,12 @@ projects[nice_menus][version] = 2.1
 
 projects[nodeformcols][subdir] = "contrib"
 projects[nodeformcols][version] = 1.0
+
+projects[entity_validator][subdir] = "contrib"
+projects[entity_validator][type] = module
+projects[entity_validator][download][type] = git
+projects[entity_validator][download][url] = "https://github.com/Gizra/entity_validator.git"
+projects[entity_validator][download][branch] = "7.x-1.x"
 
 projects[nodeorder][subdir] = "contrib"
 projects[nodeorder][version] = 1.1

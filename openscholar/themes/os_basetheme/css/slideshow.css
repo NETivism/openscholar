@@ -141,21 +141,20 @@ line-height:24px;
 }
 
 a.rslides_nav {
-    background: none repeat scroll 0 0 #284F76;
+    background: url('../images/scholarbase-sprite.png') repeat scroll 0 0 #284F76;
     color: white !important;
     float: none;
     font-size: 14px;
-    background: url('../images/ss_arrow.png');
     padding: 1px 13px 0;
     
 }
 
 a.rslides_nav.next {
-    background-position: -38px -4px;
+    background-position: -55px -25px;
     }
 
 a.rslides_nav.prev {
-	 background-position: -6px -4px;
+	 background-position: -21px -25px;
 }
 
 /** BASE SLIDESHOW STYLES END - SPECIFIC LAYOUT STYLE CSS BEGINS BELOW **/
@@ -174,21 +173,17 @@ a.rslides_nav.prev {
 }
 
  #layout_3_1_overlay .slide-copy {
-     background: none repeat scroll 0 0 rgba(30, 30, 30, 0.6);
+    background: none repeat scroll 0 0 rgba(30, 30, 30, 0.6);
     position: relative;
     width: 48%;
     z-index: 2;
     margin: 5% 0 0 5%;
+    -ms-filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#991E1E1E',endColorstr='#991E1E1E');
 }
 
 .lt-ie9  #layout_3_1_overlay .slide-copy {
-    position: absolute;
+    position: relative;
 }
-
-.lt-ie9  #layout_3_1_overlay .slide-copy {
-    background: url('../images/transparent-black.png');
-}
-
 
  #layout_3_1_overlay .rslides li {
     -moz-box-sizing: border-box;
@@ -293,15 +288,13 @@ line-height:24px;
     width: 100%;
     padding:0;
     min-height:160px;
+    -ms-filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#991E1E1E',endColorstr='#991E1E1E');
 }	
 
 .two-sidebars #layout_16_9_overlay .slide-copy {
     min-height: 130px;
 }
 
-.lt-ie9  #layout_16_9_overlay .slide-copy {
-     background: url('../images/transparent-black.png');
-}
 	
 #layout_16_9_overlay .rslides_tabs {
     background: none repeat scroll 0 0 transparent;

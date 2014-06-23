@@ -417,9 +417,6 @@ ul.action-links {
   list-style: none;
 }
 
-ul.action-links li {
-}
-
 
 /** CONTEXTUAL DROPDOWN LINKS **/
 div.contextual-links-wrapper {
@@ -428,8 +425,13 @@ z-index: 500;
 	
 a.contextual-links-trigger {
   padding: 0 2px !important;
+  background-image: url('../images/scholarbase-sprite.png');
+  background-position: -44px -204px;
+}
 
-}	
+a.contextual-links-trigger:hover {
+  background-position: -44px -186px;
+}
 	
 div.contextual-links-wrapper ul.contextual-links {
   -moz-border-radius: 0; /* LTR */
@@ -832,13 +834,6 @@ ul.nice-menu-down li li.menuparent:hover {
 	margin:0;
 }
 
-.section-nav ul.menu li a {
-	display: block;
-	text-decoration: none !important;
-	padding: 8px 15px;
-	border-bottom: 1px solid #ebe3df;
-}
-
 
 
 .section-nav a:hover {
@@ -890,6 +885,7 @@ ul.nice-menu-down li li.menuparent:hover {
 	text-decoration: none;
 	padding: 8px 15px;
 	border-bottom: 1px solid #ebe3df;
+  position: relative;
 }
 
 
@@ -910,23 +906,33 @@ ul.nice-menu-down li li.menuparent:hover {
 
 /* Section Nav - Section Heading */
 .section-nav .menu-depth-1 > a {
-	background: none !important;
 	background-color: #777 !important;
 	color: #fff;
 	text-transform: uppercase;
 	color:#FFF !important;
 }
 
-.section-nav .collapsed > a {
-	background: url('../images/arrow-right.png') no-repeat left center;
-	
+/* Apply the arrow to links with children */
+.section-nav .menu-depth-1 .collapsed > a:before {
+	background: url('../images/scholarbase-sprite.png') no-repeat -34px -756px;
+  position: absolute;
+  content: '';
+  left: 0;
+  top: 12px;
+  height: 15px;
+  width: 15px;
 }
 
-
-.section-nav .expanded > a {
-	background: url('../images/arrow-down.png') no-repeat left center;
-	
+.section-nav .menu-depth-1 .expanded > a:before {
+  background: url('../images/scholarbase-sprite.png') no-repeat -16px -756px;
+  position: absolute;
+  content: '';
+  left: 0;
+  top: 12px;
+  height: 15px;
+  width: 15px;
 }
+
 .section-nav .expanded.menu-depth-2 > a {
 	background-color: #999;
 	color: #fff;
@@ -936,60 +942,43 @@ ul.nice-menu-down li li.menuparent:hover {
 	background-color: #777 !important;
 }
 
-.section-nav .expanded.menu-depth-2 .menu-depth-3 > a,
-.section-nav .expanded.menu-depth-2 .menu-depth-4 > a,
-.section-nav .expanded.menu-depth-2 .menu-depth-5 > a,
-.section-nav .expanded.menu-depth-2 .menu-depth-6 > a {
+/* Add background color to links with children */
+.section-nav .expanded.menu-depth-2 li > a {
 	background-color: #f3f3f1;
-	padding-left: 25px;
 }
 
+/* Remove it from leaf links */
+.section-nav .expanded.menu-depth-2 .leaf > a {
+  background: none;
+}
+
+/* Position deeper children farther to the right */
 .section-nav .expanded.menu-depth-2 .menu-depth-3 > a {
 	padding-left: 25px;
-	background: url('../images/arrow-down.png') no-repeat 10px center;
 }
 
-.section-nav .expanded.menu-depth-2 .leaf.menu-depth-3 > a,
-.section-nav .expanded.menu-depth-2 .leaf.menu-depth-4 > a,
-.section-nav .expanded.menu-depth-2 .leaf.menu-depth-5 > a,
-.section-nav .expanded.menu-depth-2 .leaf.menu-depth-6 > a {
-  background: none;
+.section-nav .expanded.menu-depth-2 .menu-depth-3 > a:before {
+  left: 10px;
 }
 
 .section-nav .expanded.menu-depth-2 .menu-depth-4 > a {
 	padding-left: 35px;
-	background: url('../images/arrow-down.png') no-repeat 20px center;
+}
+
+.section-nav .expanded.menu-depth-2 .menu-depth-4 > a:before {
+  left: 20px;
 }
 
 .section-nav .expanded.menu-depth-2 .menu-depth-5 > a {
 	padding-left: 45px;
-	background: url('../images/arrow-down.png') no-repeat 30px center;
+}
+
+.section-nav .expanded.menu-depth-2 .menu-depth-5 > a:before {
+  left: 30px;
 }
 
 .section-nav .expanded.menu-depth-2 .menu-depth-6 > a {
 	padding-left: 55px;
-	
-}
-
-
-.section-nav .expanded.menu-depth-2 .collapsed.menu-depth-3 > a {
-	padding-left: 25px;
-	background: url('../images/arrow-right.png') no-repeat 10px center;
-}
-
-.section-nav .expanded.menu-depth-2 .collapsed.menu-depth-4 > a {
-	padding-left: 35px;
-	background: url('../images/arrow-right.png') no-repeat 20px center;
-}
-
-.section-nav .expanded.menu-depth-2 .collapsed.menu-depth-5 > a {
-	padding-left: 45px;
-	background: url('../images/arrow-right.png') no-repeat 30px center;
-}
-
-.section-nav .expanded.menu-depth-2 .collapsed.menu-depth-6 > a {
-	padding-left: 55px;
-
 }
 
 

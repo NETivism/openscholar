@@ -12,7 +12,7 @@
 *
 *
 */
-function vsite_vocab_get_vocabularies($vsite = false){
+function vsite_vocab_get_vocabularies($vsite = false) {
   // Get the active space
   if (! $vsite) {
     $vsite = spaces_get_space();

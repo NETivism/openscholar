@@ -152,20 +152,73 @@ class os_slideshow_box extends os_boxes_default {
     }
     $block = parent::render();
     $options = $this->options + $this->options_defaults();
-    $block['title'] = $block['subject'] = check_plain($this->title);
+    $random = $options['random'];
+    if ($random || ($block['content'] = $this->get_cache()) === FALSE) {
+      $block['title'] = $block['subject'] = check_plain($this->title);
 
-    // Show Add Slide link to admins.
-    if (($vsite = vsite_get_vsite()) && og_user_access('node', $vsite->id, 'create slideshow_slide content')) {
-      $block['content'] = l('Add Slide', 'node/add/slideshow-slide', array(
-        'attributes' => array('class' => array('add_new')),
-        'query' => array('widget' => $this->delta, 'destination' => current_path()),
-      ));
+      // Show Add Slide link to admins.
+      if (($vsite = vsite_get_vsite()) && og_user_access('node', $vsite->id, 'create slideshow_slide content')) {
+        $block['content'] = l('Add Slide', 'node/add/slideshow-slide', array(
+          'attributes' => array('class' => array('add_new')),
+          'query' => array('widget' => $this->delta, 'destination' => current_path()),
+        ));
+      }
+
+      $vars = array_intersect_key($options, array_flip(array('nodes', 'effect', 'layout')));
+      $vars['box_delta'] = $this->delta;
+      $assets = $this->setup_assets($this->delta, $options['timeout'], $options['speed'], $options['random']);
+      $this->add_assets($assets);
+
+      $block['content'] .= theme('os_slideshow_slideshow', $vars);
+      $block['assets'] = $assets;
+      $this->set_cache($block['content'], $assets);
     }
-
-    $vars = array_intersect_key($options, array_flip(array('nodes', 'timeout', 'speed', 'effect', 'layout', 'random')));
-    $vars['box_delta'] = $this->delta;
-    $block['content'] .= theme('os_slideshow_slideshow', $vars);
     return $block;
+  }
+
+  /**
+   * Setup needed assets for the widget, which will be used with add_assets().
+   *
+   * @param $delta
+   *   The delta of the box.
+   * @param $timeout
+   *   The flexslider timeout.
+   * @param $speed
+   *   The flexslider speed.
+   * @param $random
+   *   The flexslider random order boolean.
+
+   * @return array
+   *   Structured array of assets.
+   */
+  private function setup_assets($delta, $timeout, $speed, $random) {
+    $assets = array();
+    $assets['library'] = array();
+    $assets['library'][] = array('os_slideshow', 'responsiveslides');
+
+    $assets['js'] = array();
+    $assets['js'][] = drupal_get_path('module', 'os_slideshow') . '/os_slideshow_slider.js';
+
+    $assets['settings'] = array();
+    $assets['settings'][] = array(
+      // Settings reference from http://www.woothemes.com/flexslider/
+      'os_slideshow' =>
+        array('boxes-box-' . $delta => array(
+          'pager' => TRUE,
+          'nav' => TRUE,
+          // Flex starts the timer after transition. Responsive starts it during.
+          // Adding them will let responsive look like flex did.
+          'timeout' => intval($timeout + $speed),
+          'speed' => $speed,
+          'random' => $random,
+        ),
+      )
+    );
+
+    $assets['css'] = array();
+    $assets['css'][] = _os_slideshow_add_css();
+
+    return $assets;
   }
 
   /**
@@ -224,7 +277,6 @@ function os_slideshow_draggable_table($element) {
   $element['#rows'] = $rows;
   $element['#sticky'] = false;
   $element['#empty'] = true;
-  //$element['#value'] = theme('table', array(), $rows);
   $element['#theme'] = 'table';
   drupal_add_tabledrag('slideshow-slides-list', 'order', 'sibling', 'field-weight');
   return $element;

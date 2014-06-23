@@ -104,7 +104,7 @@ class os_boxes_site_logo extends os_boxes_default {
       return $form;
     }
 
-    function options_submit($form, $form_state) {
+    public function options_submit($form, $form_state) {
       // do the cropping bit now
       $file_data = $form_state['input']['file'];
 
@@ -149,7 +149,7 @@ class os_boxes_site_logo extends os_boxes_default {
         $path = drupal_get_path('module', 'os_boxes').'/plugins/os_boxes_site_logo/default_logo.jpg';
       }
 
-      $output = theme('image', array('path' => $path, 'alt' => $site_title));
+      $output = theme('image', array('path' => $path, 'alt' => $site_title, 'width' => 180, 'height' => 140));
       $block['content'] = l($output, '<front>', array('html' => true));
 
       return $block;

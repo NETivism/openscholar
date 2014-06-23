@@ -52,34 +52,30 @@ h2.block-title {
 }
 
 #menu-bar {
-    background:  #FFF;
-
+  background:  #FFF;
 }
 
-#menu-bar ul.nice-menu .menuparent a {
-    background: url("../../../hwpi_basetheme/images/menu_down_arrowBlack.gif") no-repeat scroll right center transparent;
+#menu-bar ul.nice-menu .menuparent a:before {
+  background-position: -36px -566px; /* Black Arrow */
 }
 
 #menu-bar ul.nice-menu .menuparent.over > a,
 #menu-bar ul.nice-menu .menuparent a:hover,
 #menu-bar ul.nice-menu .menuparent a.active {
-    background: url("../../../hwpi_basetheme/images/menu_down_arrowOn.gif") right center no-repeat #111;
+  background-color: #111;
 }
-
 
 #menu-bar ul.nice-menu a.active,
 #menu-bar ul.nice-menu a:hover {
   background: #111111;
 }
 
-
 #menu-bar ul.nice-menu a {
-    color: #111111;
+  color: #111111;
 }
 
-
 #menu-bar ul.nice-menu ul {
-    background: #111111;
+  background: #111111;
 }
 
 

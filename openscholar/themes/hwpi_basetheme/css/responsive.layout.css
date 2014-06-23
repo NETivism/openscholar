@@ -462,4 +462,10 @@ display: inline !important;
 #branding_footer{
     padding-bottom: 20px;
 }
+
+.region-header-second img {
+    width: 98%;
+}
+
+
 }

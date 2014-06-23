@@ -199,6 +199,11 @@ function os_profiles_process_node(&$vars) {
     return;
   }
 
+  // Adding the prefix value to the title of the person.
+  if (!empty($vars['field_prefix'])) {
+    $vars['title'] = $vars['field_prefix'][LANGUAGE_NONE][0]['value'] . ' ' . $vars['title'];
+  }
+
   // Adding a header for determining the node ID.
   drupal_add_http_header('node_json', url('node/' . $vars['nid'] . '.json', array('absolute' => TRUE)));
 
@@ -561,6 +566,7 @@ function os_profiles_profiles_fields() {
   return array(
     'title',
     'body',
+    'field_prefix',
     'field_first_name',
     'field_last_name',
     'field_address',

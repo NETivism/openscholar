@@ -16,7 +16,7 @@
 
 .os-rss-description {
     padding-left: 55px;
-    background: url('/profiles/openscholar/themes/os_basetheme/images/scholarbase-sprite.png') -38px 5px no-repeat;
+    background: url('/profiles/openscholar/themes/os_basetheme/images/scholarbase-sprite.png') 0px -682px no-repeat;
 }
 
 
@@ -28,7 +28,7 @@ h2.os-reader-feed-title,
 
 .os-reader-feed-items li a {
 	padding-left: 22px;
-    background: url('/profiles/openscholar/themes/os_basetheme/images/scholarbase-sprite.png') -38px -73px no-repeat;
+    background: url('/profiles/openscholar/themes/os_basetheme/images/scholarbase-sprite.png') 0px -756px no-repeat;
 }
 
 

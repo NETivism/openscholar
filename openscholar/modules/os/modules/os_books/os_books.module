@@ -358,7 +358,8 @@ function os_books_preprocess_menu_link(&$vars) {
     // get the menu tree for this link
     // if it has anything in its below var, it gets the collapsed/expanded class
     // links will have nothing in the below var if it's a sibling of a parent, so we need to get the full access tree
-    $tree = menu_tree_all_data($vars['element']['#original_link']['menu_name'], $vars['element']['#original_link']);
+    module_load_include('inc', 'os', 'includes/menu');
+    $tree = os_menu_tree_data($vars['element']['#original_link']['menu_name']);
     $link = _os_books_find_menu_link_in_tree($tree, $vars['element']['#original_link']);
     // this link has no children because none of them are accessible by the user
     // remove the collapsed/expanded class

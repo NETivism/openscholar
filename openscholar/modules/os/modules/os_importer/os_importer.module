@@ -4,6 +4,7 @@
  * Main file for the OS importer module.
  */
 include_once 'os_importer.features.inc';
+include_once 'os_importer.api.inc';
 
 /**
  * Implements hook_feeds_plugins().
@@ -40,6 +41,9 @@ function os_importer_feeds_plugins() {
 function os_importer_ctools_plugin_directory($module, $plugin) {
   if ($module == 'feeds_tamper') {
     return 'plugins';
+  }
+  if ($module == 'entity_validator') {
+    return 'plugins/' . $plugin;
   }
 }
 
@@ -579,9 +583,11 @@ function os_importer_verify_uploaded_file($form, $form_state) {
   $config = $source->importer->getConfig();
 
   // Get the mappings of the current importer.
+  $mappings_diff = array();
   $mappings = array();
   foreach ($config['processor']['config']['mappings'] as $mapping) {
-    $mappings[] = strtolower($mapping['source']);
+    $mappings_diff[] = strtolower($mapping['source']);
+    $mappings[] = $mapping['target'];
   }
 
   // Load the uploaded file and parse his headers.
@@ -592,45 +598,93 @@ function os_importer_verify_uploaded_file($form, $form_state) {
   $file_content = str_replace("\r", "\n", $file_content);
   $rows = explode("\n", $file_content);
 
-  // Iterate over the rows and remove empty rows.
+  feeds_include_library('ParserCSV.inc', 'ParserCSV');
+  $parser = new ParserCSV();
+  $parser->setDelimiter(',');
+  $iterator = new ParserCSVIterator($file->uri);
+
+  // Parse file's headers.
+  $header = _os_importer_parse_header($parser, $iterator);
+
+  // Check what columns are missing from the uploaded CSV file and display
+  // message if needed.
+  if ($missing = array_diff($mappings_diff, $header)) {
+    $params = array('!missing' => theme('item_list', array('items' => $missing)));
+    form_set_error('file', t('The next columns are missing in the CSV file: !missing', $params));
+    return;
+  }
+
+  // Iterate over the rows for field validation and removing empty rows.
   foreach ($rows as $key => $row) {
+    // Don't check the header.
+    if (!$key) {
+      continue;
+    }
+
+    // Check if row is empty.
     if (!implode("", explode(",", $row))) {
       unset($rows[$key]);
+      continue;
+    }
+
+    $handler = entity_validator_get_validator_handler('node', $form_state['type']);
+    $node = array(
+      'type' => $form_state['type'],
+    );
+    $node = entity_create('node', $node);
+    $wrapper = entity_metadata_wrapper('node', $node);
+    // Build the form values - break down the row.
+    $row_values = explode(",", $row);
+
+    foreach ($row_values as $delta => $value) {
+      // Fail in case mapping does not exist.
+      if (!isset($mappings[$delta])) {
+        $params = array(
+          '@delta' => $delta,
+          '@value' => $value,
+        );
+        form_set_error('file', t('Mapping of CSV file is incorrect for delta @delta with value @value', $params));
+        return;
+      }
+      $field = $mappings[$delta];
+
+      $field = str_replace(':', '__', $field);
+
+      // Do not validate file fields.
+      if ($field == 'file') {
+        continue;
+      }
+
+      if ($field == 'body') {
+        $value = array('value' => $value);
+      }
+
+      $info = $wrapper->{$field}->info();
+
+      if (!is_array($value) && $info['type'] == 'list<text>') {
+        $value = array($value);
+      }
+      elseif (!is_array($value) && $info['type'] == 'text_formatted') {
+        $value = array('value' => $value);
+      }
+      elseif (empty($value) && in_array($info['type'], array('integer', 'decimal'))) {
+        $value = 0;
+      }
+
+      $wrapper->{$field}->set($value);
+    }
+
+    if ($handler->validate($node, TRUE) === FALSE) {
+      $errors = $handler->getErrors();
+      $params = array(
+        '!errors' => $errors,
+      );
+      form_set_error('', t('The validation of the field encounter errors: !errors', $params));
     }
   }
 
   $new_file = file_save_data(implode("\n", $rows), $file->uri, FILE_EXISTS_REPLACE);
   $form_state['values']['file'] = $new_file->fid;
-
-  feeds_include_library('ParserCSV.inc', 'ParserCSV');
-  $parser = new ParserCSV();
-  $parser->setDelimiter(',');
-  $iterator = new ParserCSVIterator($new_file->uri);
-
-  // Parse file's headers.
-  $header = _os_importer_parse_header($parser, $iterator);
-
-  // Check what missing in the uploaded CSV file and display message if needed.
-  if ($missing = array_diff($mappings, $header)) {
-    $params = array('!missing' => theme('item_list', array('items' => $missing)));
-    form_set_error('file', t('The next columns are missing in you CSV: !missing', $params));
-  }
-}
-
-/**
- * Parsing the header.
- */
-function _os_importer_parse_header(ParserCSV $parser, ParserCSVIterator $iterator) {
-  $parser->setLineLimit(1);
-  $rows = $parser->parse($iterator);
-  if (!count($rows)) {
-    return array();
-  }
-  $header = array_shift($rows);
-  foreach ($header as $i => $title) {
-    $header[$i] = trim(drupal_strtolower($title));
-  }
-  return $header;
 }
 
 /**
@@ -705,69 +759,6 @@ function os_importer_feeds_presave(FeedsSource $source, $entity, $item) {
 }
 
 /**
- * Helper function to import a node on a behalf of another user.
- */
-function _os_importer_import_behalf_of_user(FeedsSource $source, $entity, $item, $id) {
-  global $user;
-
-  // When importing an iCal don't search for the author, just use the current
-  // user UID.
-  if ($source->importer->id == 'os_ical') {
-    $entity->uid = $user->uid;
-    return;
-  }
-
-  if (empty($item['author'])) {
-    $account = user_load($user->uid);
-  }
-  else {
-    if ($account = user_load_by_name($item['author'])) {
-      // Check that the user is a group member and verify he can create node of
-      // this type.
-      $account = og_is_member('node', $id, 'user', $account) && node_access('create', $entity->type, $account) ? $account : user_load($user->uid);
-    }
-    else {
-      // Loading the current user.
-      $account = user_load($user->uid);
-    }
-  }
-
-  $entity->uid = $account->uid;
-}
-
-/**
- * Helper function to import vocabularies and taxonomy terms on the fly.
- */
-function _os_importer_import_vocab(FeedsSource $source, $entity, $item, $id) {
-  $config = $source->importer->getConfig();
-
-  // Getting the mappings from the processor config.
-  $mappings = array();
-  foreach ($config['processor']['config']['mappings'] as $mapping) {
-    $mappings[] = strtolower($mapping['source']);
-  }
-
-  // Now when we know what the original mapping was we can get the names of the
-  // new vocabularies.
-  $new_vocabs = array_diff(array_keys($item), $mappings);
-  $tids = array();
-  foreach ($new_vocabs as $vocab) {
-    // Create the terms and the vocabulary.
-    $info = _os_importer_create_vocab($vocab, $item[$vocab], 'node', $id, 'node', $entity->type);
-
-    // Build the taxonomy terms for the new node.
-    $tids = array_merge($info['tids'], $tids);
-  }
-
-  if (!$tids) {
-    return;
-  }
-
-  $wrapper = entity_metadata_wrapper('node', $entity);
-  $wrapper->{OG_VOCAB_FIELD}->set($tids);
-}
-
-/**
  * Helper function for determine the vsite ID.
  *
  * @return $id
@@ -794,92 +785,6 @@ function _os_importer_determine_context() {
   list(, $id) = explode(':', $batch['form_state']['complete form']['#space']['#value']);
 
   return $id;
-}
-
-/**
- * Create OG vocab on the fly.
- *
- * @param $name
- *  The new vocabulary title.
- * @param $terms
- *  The taxonomy terms of the new vocabulary.
- * @param $group_type
- *  The group type
- * @param $gid
- *  The group ID.
- * @param $entity_type
- *  The entity type the OG vocab is attached to.
- * @param $bundle
- *  The bundle of the entity.
- *
- * @return array
- *  Array with the vocabulary ID and the his term IDs.
- */
-function _os_importer_create_vocab($name, $terms, $group_type, $gid, $entity_type, $bundle) {
-  $query = db_select('og_vocab_relation', 'ogr');
-  $query->join('taxonomy_vocabulary', 'v', 'v.vid = ogr.vid');
-
-  // We need to check if a vocabulary with that name exists in the group.
-  $result = $query
-    ->fields('v')
-    ->condition('group_type', $group_type)
-    ->condition('gid', $gid)
-    ->condition('v.name', $name)
-    ->execute()
-    ->fetchAllAssoc('vid');
-
-  if ($result) {
-    // The vocabulary is already exists, we can use him.
-    $vocabulary = reset($result);
-  }
-  else {
-    // We didn't found any vocabulary - create a new one.
-    $i = 0;
-    $machine_name = str_replace(array(' ', '-'), '_', strtolower($name));
-    while (taxonomy_vocabulary_machine_name_load($machine_name)) {
-      $machine_name = substr($machine_name, 0, 32 - strlen($i)) . $i;
-      $i++;
-    }
-
-    // Creating the new vocabulary.
-    $vocabulary = new stdClass();
-    $vocabulary->name = $name;
-    $vocabulary->machine_name = $machine_name;
-    taxonomy_vocabulary_save($vocabulary);
-  }
-
-  $tids = array();
-
-  // Creating the terms for the new vocabulary if terms are provided.
-  $taxonomy_terms = explode("|", $terms);
-  foreach ($taxonomy_terms as $taxonomy_term) {
-    if (empty($taxonomy_term)) {
-      continue;
-    }
-    $term = taxonomy_get_term_by_name($taxonomy_term, $vocabulary->machine_name);
-
-    if (!$term) {
-      $term = new stdClass();
-      $term->name = $taxonomy_term;
-      $term->vid = $vocabulary->vid;
-      taxonomy_term_save($term);
-      $tids[] = $term->tid;
-    }
-    else {
-      $tids[] = reset($term)->tid;
-    }
-  }
-
-  // Create the OG vocabulary and the relation to the group.
-  if (!og_vocab_load_og_vocab($vocabulary->vid, $entity_type, $bundle)) {
-    og_vocab_create_og_vocab($vocabulary->vid, $entity_type, $bundle)->save();
-    og_vocab_relation_save($vocabulary->vid, $group_type, $gid);
-  }
-
-  return array(
-    'vid' => $vocabulary->vid,
-    'tids' => $tids,
-  );
 }
 
 /**
@@ -930,4 +835,56 @@ function os_importer_import_person_photo($source, $entity, $target, $value, $map
     'cropbox_width' => 0,
   );
   os_profiles_insert_image($entity, $file['file'], $dimensions, FALSE);
+}
+
+/**
+ * Implements hook_entity_property_info_alter().
+ */
+function os_importer_entity_property_info_alter(&$info) {
+  $base = array(
+    'type' => 'unknown',
+    'setter callback' => 'entity_metadata_field_verbatim_set',
+    'getter callback' => 'entity_metadata_field_verbatim_get',
+  );
+
+  $data = array(
+    'class' => array(
+      'field_class_link__title' => t('Class title'),
+      'field_class_link__url' => t('Class URL'),
+      'field_offered_year__start' => t('Offered year'),
+    ),
+    'event' => array(
+      'registration' => t('Registration'),
+      'field_date__start' => t('Date start'),
+      'field_date__end' => t('Date end'),
+    ),
+    'feed' => array(
+      'field_url__url' => t('Feed url'),
+    ),
+    'person' => array(
+      'person_photo' => t('Person photo'),
+      'field_website__url' => t('Website URL'),
+      'field_website__title' => t('Website title'),
+    ),
+    'link' => array(
+      'field_links_link__url' => t('Link URL'),
+    ),
+    'presentation' => array(
+      'field_presentation_date__start' => t('Presentation date start'),
+    ),
+    'news' => array(
+      'field_news_date__start' => t('Date start'),
+      'field_news_date__end' => t('Date end'),
+      'field_url__url' => t('URL'),
+      'field_photo' => t('News photo'),
+    ),
+  );
+
+  foreach ($data as $bundle => $fields) {
+    foreach ($fields as $field => $label) {
+      $info['node']['bundles'][$bundle]['properties'][$field] = $base + array(
+        'label' => $label,
+      );
+    }
+  }
 }

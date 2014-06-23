@@ -38,53 +38,61 @@ class os_boxes_html extends os_boxes_default {
   }
 
   public function options_submit($form, $form_state) {
-    if (module_exists('vsite') && $space = spaces_get_space()) {
-      // construct a fake node so we can pass it into os_wysiwyg's helper function
-      $old_files = $form_state['values']['files'];
-      $new_files = $this->files();
+    parent::options_submit($form, $form_state);
+    
+    if (module_exists('vsite') && !$vsite = vsite_get_vsite()) {
+      return;
+    }
 
-      // copied from _media_filter_add_file_usage_from_fields in media.filter.inc
-      foreach ($old_files as $fid => $old_file_count) {
-        // Were there more files on the node just prior to saving?
-        if (empty($new_files[$fid])) {
-          $new_files[$fid] = 0;
-        }
-        if ($old_file_count > $new_files[$fid]) {
-          $deprecate = $old_file_count - $new_files[$fid];
-          // Now deprecate this usage
-          $file = file_load($fid);
-          file_usage_delete($file, 'media', 'node', $space->group->nid, $deprecate);
-          // Usage is deleted, nothing more to do with this file
-          unset($new_files[$fid]);
-        }
-        // There are the same number of files, nothing to do
-        elseif ($new_files[$fid] ==  $old_file_count) {
-          unset($new_files[$fid]);
-        }
-        // There are more files now, adjust the difference for the greater number.
-        // file_usage incrementing will happen below.
-        else {
-          // We just need to adjust what the file count will account for the new
-          // images that have been added since the increment process below will
-          // just add these additional ones in
-          $new_files[$fid] = $new_files[$fid] - $old_file_count;
-        }
+    // Construct a fake node so we can pass it into os_wysiwyg's helper function.
+    $old_files = $form_state['values']['files'];
+    $new_files = $this->files();
+
+    // Copied from _media_filter_add_file_usage_from_fields in media.filter.inc.
+    foreach ($old_files as $fid => $old_file_count) {
+      // Were there more files on the node just prior to saving?
+      if (empty($new_files[$fid])) {
+        $new_files[$fid] = 0;
       }
-
-      // Each entity revision counts for file usage. If versions are not enabled
-      // the file_usage table will have no entries for this because of the delete
-      // query above.
-      foreach ($new_files as $fid => $entity_count) {
+      if ($old_file_count > $new_files[$fid]) {
+        $deprecate = $old_file_count - $new_files[$fid];
+        // Now deprecate this usage.
         $file = file_load($fid);
-        file_usage_add($file, 'media', 'node', $space->group->nid, $entity_count);
+        file_usage_delete($file, 'media', 'node', $space->group->nid, $deprecate);
+        // Usage is deleted, nothing more to do with this file.
+        unset($new_files[$fid]);
+      }
+      // There are the same number of files, nothing to do.
+      elseif ($new_files[$fid] ==  $old_file_count) {
+        unset($new_files[$fid]);
+      }
+      // There are more files now, adjust the difference for the greater number.
+      // file_usage incrementing will happen below.
+      else {
+        // We just need to adjust what the file count will account for the new
+        // images that have been added since the increment process below will
+        // just add these additional ones in.
+        $new_files[$fid] = $new_files[$fid] - $old_file_count;
       }
     }
+
+    // Each entity revision counts for file usage. If versions are not enabled
+    // the file_usage table will have no entries for this because of the delete
+    // query above.
+    foreach ($new_files as $fid => $entity_count) {
+      $file = file_load($fid);
+      file_usage_add($file, 'media', 'node', $space->group->nid, $entity_count);
+    }
+
   }
 
   public function render() {
     $block = parent::render();
 
-    $block['content'] = check_markup($this->options['text']['value'], $this->options['text']['format']);
+    if (($block['content'] = $this->get_cache()) === FALSE) {
+      $block['content'] = check_markup($this->options['text']['value'], $this->options['text']['format']);
+      $this->set_cache($block['content']);
+    }
 
     return $block;
   }

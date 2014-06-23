@@ -59,11 +59,11 @@ color: #FFF !important;
 
 
 
-#block-os-primary-menu li {
-border-bottom: 1px solid #f4f4f4!important;
-border-top: none!important;
+#menu-bar #block-os-primary-menu li {
+border-bottom: 1px solid #444!important;
+border-top:none !important;
+display: block;
 }
-
 .link-count-mobi-main a {
 background: url("icon_menu_black.png") no-repeat 15px center transparent;
 }

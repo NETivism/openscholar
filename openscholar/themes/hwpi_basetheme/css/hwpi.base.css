@@ -64,7 +64,7 @@ table caption {
 }
 
 #footer .footer-login {
-  background: url('../images/readmore_arrow.gif') no-repeat right center;
+  background: none;
   box-shadow: none;
   color: #215990;
   float: right;
@@ -76,6 +76,20 @@ table caption {
   text-decoration: none;
   text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.7);
   border-left:1px solid #ccc;
+  position: relative;
+}
+
+#footer .footer-login:after {
+  position: absolute;
+  content: '';
+  background-image: url("../../hwpi_basetheme/images/hwpi_basesprite.png");
+  background-position: 0 -575px;
+  margin: auto;
+  top: 1px;
+  bottom: 0;
+  height: 9px;
+  width: 6px;
+  right: 0;
 }
 
 #powerby-login {
@@ -94,11 +108,29 @@ table caption {
 
 #content-column .block.block-boxes-os_boxes_manual_list .links.inline a,
 .more-link {
-  background: url('../images/readmore_arrow.gif') no-repeat right center;
   padding-right: 11px;
   font-style: normal;
   font-size: 14px;
   float: right;
+  position: relative;
+}
+
+/* I can't find where this rule is used, so I'm leaving it alone */
+#content-column .block.block-boxes-os_boxes_manual_list .links.inline a {
+  background: url('../images/readmore_arrow.gif') no-repeat right center;
+}
+
+.more-link:after {
+  position: absolute;
+  content: '';
+  background-image: url("../../hwpi_basetheme/images/hwpi_basesprite.png");
+  background-position: 0 -575px;
+  height: 9px;
+  width: 6px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  right: 1px;
 }
 
 .node-type-page .breadcrumb, 
@@ -432,7 +464,7 @@ ol.search-results li.search-result:last-child {
 .event-start .event-start {
   width: 55px;
   height: 67px;
-  background: url(../images/event-shield.png) no-repeat 0 0 transparent;
+  background: url('../images/event-shield.png') no-repeat 0 0 transparent;
   float: left;
   margin-top: 3px;
 }
@@ -529,9 +561,10 @@ ol.search-results li.search-result:last-child {
   margin-top: 20px;
 }
 
+/** Where are these used? */
 .node-class.node-teaser .links a,
 .node-class .view-os-classes a {
-  background: url(../images/readmore_arrow.gif) no-repeat right center;
+  background: url('../images/readmore_arrow.gif') no-repeat right center;
   padding-right: 15px;
   text-decoration: underline;
 }
@@ -855,6 +888,7 @@ div.messages {
   padding: 0 0 0 40px;
   background-position: 0 0;
   background-repeat: no-repeat;
+  position: relative;
 }
 
 div.status,
@@ -863,14 +897,27 @@ div.warning {
   background-image: none;
 }
 
-div.status .message-wrapper {
-  background-image: url("../../../../../misc/message-24-ok.png");
+div.messages:before {
+  content: normal;
 }
-div.error .message-wrapper {
-  background-image: url("../../../../../misc/message-24-error.png");
+
+div.messages .message-wrapper:before {
+  position: absolute;
+  content: '';
+  background-image: url('../../os_basetheme/images/scholarbase-sprite.png');
+  height: 24px;
+  width: 24px;
+  top: 0px;
+  left: 0px;
 }
-div.warning .message-wrapper {
-  background-image: url("../../../../../misc/message-24-warning.png");
+
+div.status .message-wrapper:before {
+  background-position: -38px -231px;
+}
+
+div.error .message-wrapper:before {
+  background-position: -72px -231px;
+}
 }
 
 

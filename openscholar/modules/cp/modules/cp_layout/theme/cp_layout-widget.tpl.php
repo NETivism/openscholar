@@ -1,5 +1,6 @@
 <div id="<?php echo $bid; ?>" class="<?php echo implode(' ', $classes_array); ?>">
   <?php echo $widget_title; ?>
+    <div class="widget-icon"></div>
     <div class="widget-controls">
       <?php
       if ($can_edit) {

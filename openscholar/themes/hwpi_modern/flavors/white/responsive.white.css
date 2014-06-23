@@ -44,11 +44,11 @@ border-top: none!important;
 }
 
 .link-count-mobi-main a {
-background: url("../../../hwpi_basetheme/images/icon_menu_black.png") no-repeat 15px center transparent;
+  background-position: 0 -521px;
 }
 
 .link-count-mobi-util a {
-background: url("../../../hwpi_basetheme/images/icon_plus_black.png") no-repeat center center;
+  background-position: -52px -527px;
 }
 
 

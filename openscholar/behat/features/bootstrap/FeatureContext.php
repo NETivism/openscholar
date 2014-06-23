@@ -546,9 +546,39 @@ class FeatureContext extends DrupalContext {
    */
   public function responseHeaderShouldBe($key, $result) {
     $headers = $this->getSession()->getResponseHeaders();
-    if (empty($headers[$key]) || $headers[$key][0] !== $result) {
-      throw new Exception(sprintf('The "%s" key in the response header is "%s" instead of the expected "%s".', $key, $headers[$key][0], $result));
+    if (!empty($headers[$key]) && $headers[$key][0] == $result) {
+      return;
     }
+    // Depending on the HTTP server, keys might be lowercase even if they
+    // where uppercase. To avoid failures we try to look for the same key
+    // but lowercase before we decide it is missing.
+    $lowercase_key = strtolower($key);
+    if (!empty($headers[$lowercase_key]) && $headers[$lowercase_key][0] == $result) {
+      return;
+    }
+    throw new Exception(sprintf('The "%s" key in the response header is "%s" instead of the expected "%s".', $key, $headers[$key][0], $result));
+  }
+
+  /**
+   * @Then /^response header "([^"]*)" should not be "([^"]*)"$/
+   */
+  public function responseHeaderShouldNotBe($key, $result) {
+    $headers = $this->getSession()->getResponseHeaders();
+    if (!empty($headers[$key]) && $headers[$key][0] == $result) {
+      throw new Exception(sprintf('The "%s" key in the response header should not be "%s", but it is.', $key, $headers[$key][0]));
+    }
+  }
+
+  /**
+   * @When /^I create the vocabulary "([^"]*)" in the group "([^"]*)" assigned to bundle "([^"]*)"$/
+   */
+  public function iCreateVocabInGroup($vocab_name, $group, $bundle) {
+    return array(
+      new Step\When('I visit "' . $group . '/cp/build/taxonomy/add"'),
+      new Step\When('I fill in "Name" with "' . $vocab_name . '"'),
+      new Step\When('I select "' . $bundle . '" from "Content types"'),
+      new Step\When('I press "edit-submit"'),
+    );
   }
 
   /**
@@ -1884,4 +1914,18 @@ class FeatureContext extends DrupalContext {
       throw new Exception(sprintf('The feed items has been imported %s times.', $count));
     }
   }
+
+  /**
+   * @Given /^I edit the entity "([^"]*)" with title "([^"]*)"$/
+   */
+  public function iEditTheEntityWithTitle($entity_type, $title) {
+    $id = $this->invoke_code('os_migrate_demo_get_entity_id', array("'$entity_type'", "'$title'"));
+    $purl = $this->invoke_code('os_migrate_demo_get_entity_vsite_purl', array("'file'", "'$id'"));
+    $purl = !empty($purl) ? $purl . '/' : '';
+
+    return array(
+      new Step\When('I visit "' . $purl . $entity_type . '/' . $id . '/edit"'),
+    );
+  }
+
 }

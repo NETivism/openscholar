@@ -57,6 +57,8 @@ function os_boxes_form_boxes_box_form_alter(&$form, &$form_state) {
  * ctools overlay_commands
  */
 function os_boxes_widget_submit($form, $form_state) {
+  global $dummy_rendering;
+
   if ($form_state['values']['op'] !== t('Cancel')) {
     $box     = boxes_box_load($form_state['box']->delta);
     $html    = '';
@@ -79,11 +81,13 @@ function os_boxes_widget_submit($form, $form_state) {
         break;
 
       default:
+        $dummy_rendering = TRUE;
         // Coming from public view can only edit boxes from this view.
         module_load_include('module', 'block', 'block');
         $b     = (object)os_boxes_os_widget($box);
         $t     = _block_render_blocks(array($b));
         $block = array_shift($t);
+        $dummy_rendering = FALSE;
 
         // Do this or else notices will throw. absolutely nothing is done with
         // it but whatever.

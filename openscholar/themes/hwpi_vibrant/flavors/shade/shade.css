@@ -328,16 +328,16 @@ ul.nice-menu-down li ul li ul {
     box-shadow: 0 0;
 }
 
-
-
 .block-boxes-os_taxonomy_fbt.navigation a {
-	font-weight:normal;
-	}
-
-#menu-bar ul.nice-menu .menuparent a span, #menu-bar ul.nice-menu .menuparent a:hover span, #menu-bar ul.nice-menu .menuparent a.active span {
-    background: url("../../images/menu-arrow_sh.png") no-repeat scroll right center transparent;
-
+  font-weight:normal;
 }
+
+#menu-bar ul.nice-menu .menuparent a:before,
+#menu-bar ul.nice-menu .menuparent a:hover:before,
+#menu-bar ul.nice-menu .menuparent a.active:before {
+  background-position: -57px -566px;
+}
+
 .not-front .field-name-body {
     font-family: open sans, arial, sans-serif;
     font-size: 16px;
