@@ -1893,7 +1893,7 @@ function os_taxonomy_og_fields_info() {
     'instance' => array(
       'default_value' => array(
         0 => array(
-          'value' => 1,
+          'value' => 0,
         ),
       ),
       'deleted' => 0,
